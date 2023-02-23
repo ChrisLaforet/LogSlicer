@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
-
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
 <BorderPane id="scrollPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chrislaforetsoftware.logslicer.controller.MainViewController">
     <top>
         <MenuBar fx:id="menuBar" layoutY="-2.0" prefHeight="31.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -29,9 +26,10 @@
         </MenuBar>
     </top>
     <center>
-        <AnchorPane>
-            <TextArea editable="false" prefHeight="400.0" prefWidth="600.0" text="Load a log file using File-Open" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
-        </AnchorPane>
+        <TextArea fx:id="logText" editable="false" prefHeight="400.0" prefWidth="600.0" text="Load a log file using File-Open" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+         <font>
+            <Font name="Courier New" size="13.0" />
+         </font></TextArea>
     </center>
     <bottom>
         <HBox>
@@ -39,11 +37,14 @@
                 <Insets bottom="5.0" left="5.0" right="5.0" />
             </padding>
             <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                <Label fx:id="statusMessage" prefWidth="150.0" text="Checking for Changes..." />
-                <ProgressBar fx:id="progressBar" prefWidth="150.0" progress="0.0" />
+                <ProgressBar fx:id="progressStatus" prefWidth="150.0" progress="0.0" />
+                <Label fx:id="statusMessage" prefWidth="150.0" text="Waiting">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin></Label>
             </HBox>
             <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
-                <Button fx:id="loadChangesButton" mnemonicParsing="false" text="Load Changes" />
+            <Label fx:id="totalLines" text=" " />
             </HBox>
         </HBox>
     </bottom>
