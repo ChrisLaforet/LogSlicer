@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -30,11 +31,20 @@ public class MainViewController {
     }
 
     private void loadFile(File file) {
+        //clearLogs();
+
         try {
             logContent = new LogContent(file);
 
         } catch (Exception e) {
+            final Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error loading file " + file.getName());
+            alert.setContentText("A problem occurred while loading file " + file.getName() +
+                    "\r\nPath to file:" + file.getAbsolutePath() +
+                    "\r\nException: " + e.getMessage());
 
+            alert.showAndWait();
         }
     }
 
