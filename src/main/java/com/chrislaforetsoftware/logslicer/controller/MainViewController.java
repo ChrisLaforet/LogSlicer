@@ -1,6 +1,7 @@
 package com.chrislaforetsoftware.logslicer.controller;
 
 import com.chrislaforetsoftware.logslicer.LogSlicer;
+import com.chrislaforetsoftware.logslicer.log.LogContent;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,6 +18,8 @@ public class MainViewController {
     @FXML
     private AnchorPane mainContainer;
 
+    private LogContent logContent;
+
     public void handleOpenLog(ActionEvent actionEvent) {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open log file");
@@ -28,10 +31,10 @@ public class MainViewController {
 
     private void loadFile(File file) {
         try {
+            logContent = new LogContent(file);
 
         } catch (Exception e) {
 
-        } finally {
         }
     }
 
