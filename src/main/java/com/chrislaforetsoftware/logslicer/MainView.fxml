@@ -4,12 +4,13 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 
 <AnchorPane id="scrollPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chrislaforetsoftware.logslicer.controller.MainViewController">
    <children>
-      <MenuBar fx:id="menuBar" layoutY="-2.0" prefHeight="31.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0"
-               AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <MenuBar fx:id="menuBar" layoutY="-2.0" prefHeight="31.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
@@ -20,13 +21,16 @@
         </menus>
       </MenuBar>
 
-      <ScrollPane layoutY="31.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.topAnchor="31.0"
-                  AnchorPane.leftAnchor="0.0"
-                  AnchorPane.rightAnchor="0.0"
-                  AnchorPane.bottomAnchor="0.0">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-        </content>
+      <ScrollPane layoutY="31.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="31.0">
+         <content>
+            <Pane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <TextField />
+                  <TextField layoutY="26.0" />
+                  <TextField layoutY="52.0" />
+               </children>
+            </Pane>
+         </content>
       </ScrollPane>
    </children>
 </AnchorPane>
