@@ -25,11 +25,19 @@
             </menus>
         </MenuBar>
     </top>
+    <left>
+        <TextArea fx:id="logLineNumber" editable="false" prefHeight="400.0" prefWidth="80.0" text=" " AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+            <font>
+                <Font name="Courier New" size="13.0" />
+            </font>
+        </TextArea>
+    </left>
     <center>
         <TextArea fx:id="logText" editable="false" prefHeight="400.0" prefWidth="600.0" text="Load a log file using File-Open" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
          <font>
             <Font name="Courier New" size="13.0" />
-         </font></TextArea>
+         </font>
+        </TextArea>
     </center>
     <bottom>
         <HBox>

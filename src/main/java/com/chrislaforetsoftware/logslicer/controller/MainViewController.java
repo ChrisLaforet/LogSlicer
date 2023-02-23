@@ -23,6 +23,8 @@ public class MainViewController {
     private AnchorPane mainContainer;
 
     @FXML
+    private TextArea logLineNumber;
+    @FXML
     private TextArea logText;
 
     @FXML
@@ -74,6 +76,12 @@ public class MainViewController {
                 logContent = loaderTask.get();
                 statusMessage.setText("Loaded " + file.getName());
                 logText.setText(logContent.getText());
+
+                final ScrollBar scrollBar = (ScrollBar)logLineNumber.lookup(".scroll-bar:vertical");
+                scrollBar.setDisable(true);
+                scrollBar.setVisible(false);
+                //logLineNumber.setText("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n");
+
                 totalLines.setText(logContent.lineCount() + " lines");
             } catch (InterruptedException | ExecutionException e) {
                 logText.setText("Could not load file from: " + file.getAbsolutePath());
