@@ -23,8 +23,6 @@ public class MainViewController {
     private AnchorPane mainContainer;
 
     @FXML
-    private TextArea logLineNumber;
-    @FXML
     private TextArea logText;
 
     @FXML
