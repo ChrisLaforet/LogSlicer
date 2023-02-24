@@ -21,18 +21,6 @@ public class LogSlicer extends Application {
         stage.setTitle("LogSlicer: Parse components from logs");
         stage.setScene(new Scene(parent, 800, 500));
         LogSlicer.stage = stage;
-
-
-        CodeArea codeArea = new CodeArea();
-        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-        // codeArea.setContextMenu( new DefaultContextMenu() );
-
-        new VirtualizedScrollPane<>(codeArea);
-        scene.getStylesheets().add(JavaKeywordsAsyncDemo.class.getResource("java-keywords.css").toExternalForm());
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Java Keywords Demo");
-        primaryStage.show();
-
         stage.show();
     }
 

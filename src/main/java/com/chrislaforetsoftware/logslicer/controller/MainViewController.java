@@ -8,7 +8,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,10 +25,7 @@ import java.util.stream.Stream;
 public class MainViewController {
 
     @FXML
-    private AnchorPane mainContainer;
-
-    @FXML
-    private TextArea logText;
+    private StackPane anchorPane;
 
     @FXML
     private Label statusMessage;
@@ -36,7 +38,24 @@ public class MainViewController {
 
     private LogContent logContent;
 
-    public void handleScroll(ActionEvent actionEvent) {
+    private CodeArea codeArea;
+
+    public void initialize() {
+        codeArea = new CodeArea();
+        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+        // codeArea.setContextMenu( new DefaultContextMenu() );
+
+        final VirtualizedScrollPane virtualizedScrollPane = new VirtualizedScrollPane<>(codeArea);
+        virtualizedScrollPane.autosize();
+//        virtualizedScrollPane.setMaxHeight(Double.MAX_VALUE);
+//        virtualizedScrollPane.setMaxWidth(Double.MAX_VALUE);
+        anchorPane.getChildren().add(virtualizedScrollPane);
+
+//        new VirtualizedScrollPane<>(codeArea);
+//        scene.getStylesheets().add(JavaKeywordsAsyncDemo.class.getResource("java-keywords.css").toExternalForm());
+//        primaryStage.setScene(scene);
+//        primaryStage.setTitle("Java Keywords Demo");
+//        primaryStage.show();
     }
 
     public void handleOpenLog(ActionEvent actionEvent) {
@@ -76,22 +95,21 @@ public class MainViewController {
             try {
                 logContent = loaderTask.get();
                 statusMessage.setText("Loaded " + file.getName());
-                logText.setText(logContent.getText());
-
-                final ScrollBar scrollBar = (ScrollBar)logLineNumber.lookup(".scroll-bar:vertical");
-                scrollBar.setDisable(true);
-                scrollBar.setVisible(false);
-                //logLineNumber.setText("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n");
-
+                codeArea.clear();
+                codeArea.replaceText(0, 0, logContent.getText());
                 totalLines.setText(logContent.lineCount() + " lines");
+
+Platform.runLater(() -> codeArea.position(0, 0).toOffset());
             } catch (InterruptedException | ExecutionException e) {
-                logText.setText("Could not load file from: " + file.getAbsolutePath());
+                codeArea.clear();
+                codeArea.replaceText(0, 0, "Could not load file from: " + file.getAbsolutePath());
                 statusMessage.setText("Error showing file");
             }
         });
 
         loaderTask.setOnFailed(workerStateEvent -> {
-            logText.setText("Could not load file from: " + file.getAbsolutePath());
+            codeArea.clear();
+            codeArea.replaceText(0, 0, "Could not load file from: " + file.getAbsolutePath());
             statusMessage.setText("Failed to load file");
             totalLines.setText("");
 
