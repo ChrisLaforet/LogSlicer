@@ -24,12 +24,17 @@
                 </Menu>
             <Menu mnemonicParsing="false" text="Search">
               <items>
-                <MenuItem mnemonicParsing="false" text="Find">
+                <MenuItem mnemonicParsing="false" text="Find..." onAction="#handleSearch">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" text="Go to line">
+                  <MenuItem mnemonicParsing="false" text="Find next" onAction="#handleSearchNext">
+                      <accelerator>
+                          <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                      </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Go to line..." onAction="#handleGoToLine">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="G" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>

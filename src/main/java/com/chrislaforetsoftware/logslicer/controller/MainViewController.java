@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Files;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
@@ -40,6 +41,8 @@ public class MainViewController {
 
     private CodeArea codeArea;
 
+    private String searchFor;
+
     public void initialize() {
         codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
@@ -58,6 +61,31 @@ public class MainViewController {
 //        primaryStage.show();
     }
 
+    public void handleSearch(ActionEvent actionEvent) {
+        if (logContent == null) {
+            return;
+        }
+
+        final TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Find text");
+        dialog.setHeaderText("Search for text within this log file");
+        dialog.setContentText("Search for:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(searchString -> {
+            searchFor = searchString;
+//            System.out.println("Your name: " + searchString)
+        });
+    }
+
+    public void handleSearchNext(ActionEvent actionEvent) {
+        if (searchFor == null || searchFor.isEmpty()) {
+            handleSearch(actionEvent);
+        } else {
+            // flesh in this logic
+        }
+    }
+
     public void handleOpenLog(ActionEvent actionEvent) {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open log file");
@@ -67,6 +95,31 @@ public class MainViewController {
             progressStatus.progressProperty().bind(loadFileTask.progressProperty());
             loadFileTask.run();
         }
+    }
+
+    public void handleGoToLine(ActionEvent actionEvent) {
+        if (logContent == null) {
+            return;
+        }
+
+        final TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Go to line");
+        dialog.setHeaderText("Jump to the specified line number (1 to " + logContent.lineCount() + ")");
+        dialog.setContentText("Line number:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(lineString -> {
+            try {
+                int lineNumber = Integer.parseInt(lineString.trim());
+                if (lineNumber > 0 && lineNumber <= logContent.lineCount()) {
+                    Platform.runLater(() -> codeArea.position(lineNumber, 0).toOffset());
+                }
+            } catch (Exception e) {
+
+            }
+            searchFor = lineString;
+//            System.out.println("Your name: " + searchString)
+        });
     }
 
     private Task<LogContent> loadLogContent(File file) {
@@ -99,7 +152,7 @@ public class MainViewController {
                 codeArea.replaceText(0, 0, logContent.getText());
                 totalLines.setText(logContent.lineCount() + " lines");
 
-Platform.runLater(() -> codeArea.position(0, 0).toOffset());
+Platform.runLater(() -> codeArea.position(1, 0).toOffset());
             } catch (InterruptedException | ExecutionException e) {
                 codeArea.clear();
                 codeArea.replaceText(0, 0, "Could not load file from: " + file.getAbsolutePath());
