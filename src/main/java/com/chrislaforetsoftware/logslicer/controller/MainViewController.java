@@ -38,6 +38,9 @@ public class MainViewController {
 
     private LogContent logContent;
 
+    public void handleScroll(ActionEvent actionEvent) {
+    }
+
     public void handleOpenLog(ActionEvent actionEvent) {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open log file");
