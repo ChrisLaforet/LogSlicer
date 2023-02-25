@@ -39,6 +39,8 @@ public class MainViewController {
 
     private LogContent logContent;
 
+    private VirtualizedScrollPane virtualizedScrollPane;
+
     private CodeArea codeArea;
 
     private String searchFor;
@@ -48,7 +50,7 @@ public class MainViewController {
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
         // codeArea.setContextMenu( new DefaultContextMenu() );
 
-        final VirtualizedScrollPane virtualizedScrollPane = new VirtualizedScrollPane<>(codeArea);
+        virtualizedScrollPane = new VirtualizedScrollPane<>(codeArea);
         virtualizedScrollPane.autosize();
 //        virtualizedScrollPane.setMaxHeight(Double.MAX_VALUE);
 //        virtualizedScrollPane.setMaxWidth(Double.MAX_VALUE);
@@ -112,13 +114,19 @@ public class MainViewController {
             try {
                 int lineNumber = Integer.parseInt(lineString.trim());
                 if (lineNumber > 0 && lineNumber <= logContent.lineCount()) {
-                    Platform.runLater(() -> codeArea.position(lineNumber, 0).toOffset());
+                    codeArea.getCaretPosition();
+                    System.out.println(codeArea.getCaretPosition());
+                    codeArea.requestFollowCaret();
+org.reactfx.value.Val<Double> val = virtualizedScrollPane.totalHeightEstimateProperty();
+System.out.println("Height: " + val.getValue());
+System.out.println("Code Height: " + codeArea.getMaxHeight());
+System.out.println("Y scale: " + codeArea.getScaleY());
+
+                    //Platform.runLater(() -> codeArea.position(lineNumber, 0).toOffset());
                 }
             } catch (Exception e) {
 
             }
-            searchFor = lineString;
-//            System.out.println("Your name: " + searchString)
         });
     }
 
