@@ -143,9 +143,9 @@ System.out.println("Y scale: " + codeArea.getScaleY());
 
                 final LogContent log = new LogContent(file);
                 String line;
-                long linesLoaded = 0;
+                int linesLoaded = 0;
                 while ((line = reader.readLine()) != null) {
-                    log.addLine(line);
+                    log.addLine(linesLoaded, line);
                     updateProgress(++linesLoaded, lineCount);
                 }
                 return log;

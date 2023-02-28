@@ -15,8 +15,8 @@ public class LogContent {
         this.file = file;
     }
 
-    public void addLine(String line) {
-        lines.add(new LogLine(line));
+    public void addLine(int lineNumber, String line) {
+        lines.add(new LogLine(lineNumber, line));
     }
 
     public int lineCount() {
