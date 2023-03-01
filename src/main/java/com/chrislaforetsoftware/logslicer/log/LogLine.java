@@ -14,5 +14,7 @@ public class LogLine {
         return this.line;
     }
 
-    public int getLineNumber() { return this.lineNumber; }
+    public int getLineNumber() {
+        return this.lineNumber;
+    }
 }
