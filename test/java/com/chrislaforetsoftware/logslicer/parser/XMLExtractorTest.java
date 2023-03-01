@@ -32,6 +32,15 @@ class XMLExtractorTest {
     void givenLogLine_whenContainsSingleClosedTag_thenReturnsTag() {
         final LogContent content = new LogContent();
         content.addLine(0, "<Testing />");
-        assertEquals("Testing", XMLExtractor.testAndExtractFrom(content, 0));
+        final MarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
+        assertEquals("<Testing/>", xml.getContent());
+    }
+
+    @Test
+    void givenLogLine_whenContainsWrappedSingleClosedTag_thenReturnsTag() {
+        final LogContent content = new LogContent();
+        content.addLine(0, "prefix<Testing /> suffix");
+        final MarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
+        assertEquals("<Testing/>", xml.getContent());
     }
 }

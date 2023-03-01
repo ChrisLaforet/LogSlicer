@@ -19,6 +19,18 @@ public class Tag {
         return start;
     }
 
+    public String getMarkup() {
+// TODO: extract to support xml and json
+        final StringBuffer sb = new StringBuffer();
+        sb.append("<");
+        sb.append(tag);
+        if (isClosed) {
+            sb.append("/");
+        }
+        sb.append(">");
+        return sb.toString();
+    }
+
     public String getTag() {
         return tag;
     }

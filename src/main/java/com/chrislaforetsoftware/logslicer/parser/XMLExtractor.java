@@ -8,11 +8,11 @@ public class XMLExtractor {
     public static final char END_BRACKET = '>';
     public static final String END_TAG_SLASH = "/";
 
-    public static String testAndExtractFrom(LogContent content, int lineNumber) {
+    public static MarkupContent testAndExtractFrom(LogContent content, int lineNumber) {
         final Tag tag = findStartTag(content.getTextFor(lineNumber));
         if (tag != null)
         {
-            return tag.getTag();
+            return new MarkupContent(tag.getMarkup(), lineNumber, lineNumber);
         }
         return null;
     }
