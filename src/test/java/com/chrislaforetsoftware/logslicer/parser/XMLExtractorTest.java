@@ -74,4 +74,13 @@ class XMLExtractorTest {
         assertNotNull(xml);
         assertEquals(SAMPLE_XML_IN_ONE_LINE, xml.getContent());
     }
+
+    @Test
+    void givenLogLine_whenContainsXMLBetweenOpenAndClosedTagsWithFalseStartTag_thenReturnsXML() {
+        final LogContent content = new LogContent();
+        content.addLine(0, "<FalseTag>" + SAMPLE_XML_IN_ONE_LINE);
+        final MarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(xml);
+        assertEquals(SAMPLE_XML_IN_ONE_LINE, xml.getContent());
+    }
 }
