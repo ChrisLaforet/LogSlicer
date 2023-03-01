@@ -43,4 +43,12 @@ class XMLExtractorTest {
         final MarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
         assertEquals("<Testing/>", xml.getContent());
     }
+
+    @Test
+    void givenLogLine_whenContainsOpenAndClosedTag_thenReturnsXML() {
+        final LogContent content = new LogContent();
+        content.addLine(0, "<Testing> </Testing>");
+        final MarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
+        assertEquals("<Testing> </Testing>", xml.getContent());
+    }
 }

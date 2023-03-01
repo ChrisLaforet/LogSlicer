@@ -3,20 +3,26 @@ package com.chrislaforetsoftware.logslicer.parser;
 public class Tag {
 
     private int start;
+    private int end;
     private String tag;
-    private boolean isClosed;
+    private boolean closed;
 
-    public Tag(int start, String tag) {
+    public Tag(int start, int end, String tag) {
         this.start = start;
+        this.end = end;
         this.tag = tag;
     }
 
     public void closeTag() {
-        this.isClosed = true;
+        this.closed = true;
     }
 
     public int getStart() {
         return start;
+    }
+
+    public int getEnd() {
+        return end;
     }
 
     public String getMarkup() {
@@ -24,7 +30,7 @@ public class Tag {
         final StringBuffer sb = new StringBuffer();
         sb.append("<");
         sb.append(tag);
-        if (isClosed) {
+        if (closed) {
             sb.append("/");
         }
         sb.append(">");
@@ -33,5 +39,9 @@ public class Tag {
 
     public String getTag() {
         return tag;
+    }
+
+    public boolean isClosed() {
+        return closed;
     }
 }

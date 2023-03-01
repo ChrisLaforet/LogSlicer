@@ -1,9 +1,9 @@
 package com.chrislaforetsoftware.logslicer.parser;
 
 public class MarkupContent {
-    private String content;
-    private int startLine;
-    private int endLine;
+    private final String content;
+    private final int startLine;
+    private final int endLine;
 
     public MarkupContent(String content, int startLine, int endLine) {
         this.content = content;
