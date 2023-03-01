@@ -5,14 +5,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class LogContent {
 
-    private File file;
     private List<LogLine> lines = new ArrayList<>();
 
-    public LogContent(File file) {
-        this.file = file;
+    public LogContent() {
     }
 
     public void addLine(int lineNumber, String line) {
@@ -21,6 +20,17 @@ public class LogContent {
 
     public int lineCount() {
         return lines.size();
+    }
+
+    public String getTextFor(int lineNumber) {
+        if (lines.size() < lineNumber) {
+            return null;
+        }
+        Optional<LogLine> match = lines.stream().filter(logLine -> logLine.getLineNumber() == lineNumber).findFirst();
+        if (match.isEmpty()) {
+            return null;
+        }
+        return match.get().getLine();
     }
 
     public String getText() {

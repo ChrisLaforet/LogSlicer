@@ -141,7 +141,7 @@ System.out.println("Y scale: " + codeArea.getScaleY());
                     lineCount = stream.count();
                 }
 
-                final LogContent log = new LogContent(file);
+                final LogContent log = new LogContent();
                 String line;
                 int linesLoaded = 0;
                 while ((line = reader.readLine()) != null) {
