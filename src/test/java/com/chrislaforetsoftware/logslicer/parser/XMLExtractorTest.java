@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class XMLExtractorTest {
 
+    static private final String SAMPLE_XML_IN_ONE_LINE = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><Testing></Testing></SOAP-ENV:Body></SOAP-ENV:Envelope>";
+
     @Test
     void givenLogLine_whenTextEmpty_thenReturnsNull() {
         final LogContent content = new LogContent();
@@ -33,6 +35,7 @@ class XMLExtractorTest {
         final LogContent content = new LogContent();
         content.addLine(0, "<Testing />");
         final MarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(xml);
         assertEquals("<Testing/>", xml.getContent());
     }
 
@@ -41,6 +44,7 @@ class XMLExtractorTest {
         final LogContent content = new LogContent();
         content.addLine(0, "prefix<Testing /> suffix");
         final MarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(xml);
         assertEquals("<Testing/>", xml.getContent());
     }
 
@@ -49,6 +53,25 @@ class XMLExtractorTest {
         final LogContent content = new LogContent();
         content.addLine(0, "<Testing> </Testing>");
         final MarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(xml);
         assertEquals("<Testing> </Testing>", xml.getContent());
+    }
+
+    @Test
+    void givenLogLine_whenContainsXMLBetweenOpenAndClosedTags_thenReturnsXML() {
+        final LogContent content = new LogContent();
+        content.addLine(0, SAMPLE_XML_IN_ONE_LINE);
+        final MarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(xml);
+        assertEquals(SAMPLE_XML_IN_ONE_LINE, xml.getContent());
+    }
+
+    @Test
+    void givenLogLine_whenContainsWrappedXMLBetweenOpenAndClosedTags_thenReturnsXML() {
+        final LogContent content = new LogContent();
+        content.addLine(0, "This is a test with " + SAMPLE_XML_IN_ONE_LINE + " xml content");
+        final MarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(xml);
+        assertEquals(SAMPLE_XML_IN_ONE_LINE, xml.getContent());
     }
 }
