@@ -6,8 +6,8 @@ public class JSONExtractor {
     public static IMarkupContent testAndExtractFrom(LogContent content, int lineNumber) {
 
         final String line = content.getTextFor(lineNumber);
-        int openBraceOffset = findOpenBrace(line);
-        if (openBraceOffset >= 0) {
+        int openBraceOffset = findOpenBraceAfter(line, 0);
+        while (openBraceOffset >= 0) {
             int closeBraceOffset = findNextClosingBraceAfter(line, openBraceOffset);
             while (closeBraceOffset >= 0) {
                 final String possibleJson = line.substring(openBraceOffset, closeBraceOffset + 1);
@@ -17,12 +17,13 @@ public class JSONExtractor {
                 }
                 closeBraceOffset = findNextClosingBraceAfter(line, closeBraceOffset + 1);
             }
+            openBraceOffset = findOpenBraceAfter(line, openBraceOffset + 1);
         }
         return null;
     }
 
-    private static int findOpenBrace(String line) {
-        return line.indexOf('{');
+    private static int findOpenBraceAfter(String line, int start) {
+        return line.indexOf('{', start);
     }
 
     private static int findNextClosingBraceAfter(String line, int start) {

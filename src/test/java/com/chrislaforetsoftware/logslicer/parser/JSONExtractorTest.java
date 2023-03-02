@@ -47,4 +47,13 @@ class JSONExtractorTest {
         assertNotNull(json);
         assertEquals("{}", json.getContent());
     }
+
+    @Test
+    void givenLogLine_whenContainsEmptyJSONPrecededByFalseAlarms_thenReturnsTag() {
+        final LogContent content = new LogContent();
+        content.addLine(0, "This { is a { red herring {} with a trailer");
+        final IMarkupContent json = JSONExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(json);
+        assertEquals("{}", json.getContent());
+    }
 }
