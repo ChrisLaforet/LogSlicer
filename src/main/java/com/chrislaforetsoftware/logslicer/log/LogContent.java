@@ -9,13 +9,17 @@ import java.util.Optional;
 
 public class LogContent {
 
-    private List<LogLine> lines = new ArrayList<>();
+    private final List<LogLine> lines = new ArrayList<>();
+
+    private final StringBuilder fullText = new StringBuilder(8192);
 
     public LogContent() {
     }
 
     public void addLine(int lineNumber, String line) {
         lines.add(new LogLine(lineNumber, line));
+        fullText.append(line);
+        fullText.append("\r\n");
     }
 
     public int lineCount() {
@@ -34,11 +38,6 @@ public class LogContent {
     }
 
     public String getText() {
-        final StringBuffer sb = new StringBuffer(4096);
-        lines.forEach(line -> {
-            sb.append(line.getLine());
-            sb.append("\r\n");
-        });
-        return sb.toString();
+        return fullText.toString();
     }
 }
