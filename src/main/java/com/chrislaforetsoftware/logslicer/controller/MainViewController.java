@@ -1,6 +1,7 @@
 package com.chrislaforetsoftware.logslicer.controller;
 
 import com.chrislaforetsoftware.logslicer.LogSlicer;
+import com.chrislaforetsoftware.logslicer.display.LogContentTask;
 import com.chrislaforetsoftware.logslicer.log.LogContent;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -88,6 +89,8 @@ public class MainViewController {
     }
 
     public void handleOpenLog(ActionEvent actionEvent) {
+        progressStatus.setProgress(0.0);
+
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open log file");
         final File file = fileChooser.showOpenDialog(LogSlicer.getStage());
@@ -95,10 +98,13 @@ public class MainViewController {
             Task<LogContent> loadFileTask = loadLogContent(file);
             progressStatus.progressProperty().bind(loadFileTask.progressProperty());
             loadFileTask.run();
+            progressStatus.progressProperty().unbind();
         }
     }
 
     public void handlePasteLog(ActionEvent actionEvent) {
+        progressStatus.setProgress(0.0);
+
         final PasteLogViewDialog dialog = new PasteLogViewDialog(LogSlicer.getStage());
         dialog.showAndWait().ifPresent(text -> {
             Task<LogContent> loadFileTask = loadLogContent(text);
@@ -139,14 +145,13 @@ System.out.println("Y scale: " + codeArea.getScaleY());
     }
 
     private Task<LogContent> loadLogContent(String text) {
-        final Task<LogContent> loaderTask = new Task<>() {
+        final LogContentTask loaderTask = new LogContentTask() {
 
-            protected LogContent call() throws Exception {
+            protected LogContent doCall() throws Exception {
                 long lineCount = text.codePoints().filter(ch -> ch == '\n').count();
                 try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
-                    final LogContent log = parseLogContent(this, reader, (int)lineCount);
-                    updateProgress(lineCount, lineCount);
-                    return log;                }
+                    return parseLogContent(this, reader, (int)lineCount);
+                }
             }
         };
         loaderTask.setOnSucceeded(workerStateEvent -> {
@@ -157,7 +162,9 @@ System.out.println("Y scale: " + codeArea.getScaleY());
                 codeArea.replaceText(0, 0, logContent.getText());
                 totalLines.setText(logContent.lineCount() + " lines");
 
-Platform.runLater(() -> codeArea.position(1, 0).toOffset());
+                progressStatus.progressProperty().unbind();
+
+                Platform.runLater(() -> codeArea.position(1, 0).toOffset());
             } catch (InterruptedException | ExecutionException e) {
                 codeArea.clear();
                 codeArea.replaceText(0, 0, "Error showing pasted log file");
@@ -171,6 +178,8 @@ Platform.runLater(() -> codeArea.position(1, 0).toOffset());
             statusMessage.setText("Failed to parse pasted log file");
             totalLines.setText("");
 
+            progressStatus.progressProperty().unbind();
+
             final Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Error parsing");
@@ -181,18 +190,16 @@ Platform.runLater(() -> codeArea.position(1, 0).toOffset());
     }
 
     private Task<LogContent> loadLogContent(File file) {
-        final Task<LogContent> loaderTask = new Task<>() {
+        final LogContentTask loaderTask = new LogContentTask() {
             @Override
-            protected LogContent call() throws Exception {
+            protected LogContent doCall() throws Exception {
                 long lineCount;
                 try (Stream<String> stream = Files.lines(file.toPath())) {
                     lineCount = stream.count();
                 }
 
                 try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                    final LogContent log = parseLogContent(this, reader, (int)lineCount);
-                    updateProgress(lineCount, lineCount);
-                    return log;
+                    return parseLogContent(this, reader, (int)lineCount);
                 }
             }
         };
@@ -205,7 +212,9 @@ Platform.runLater(() -> codeArea.position(1, 0).toOffset());
                 codeArea.replaceText(0, 0, logContent.getText());
                 totalLines.setText(logContent.lineCount() + " lines");
 
-Platform.runLater(() -> codeArea.position(1, 0).toOffset());
+                progressStatus.progressProperty().unbind();
+
+                Platform.runLater(() -> codeArea.position(1, 0).toOffset());
             } catch (InterruptedException | ExecutionException e) {
                 codeArea.clear();
                 codeArea.replaceText(0, 0, "Could not load file from: " + file.getAbsolutePath());
@@ -219,6 +228,8 @@ Platform.runLater(() -> codeArea.position(1, 0).toOffset());
             statusMessage.setText("Failed to load file");
             totalLines.setText("");
 
+            progressStatus.progressProperty().unbind();
+
             final Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Error loading file " + file.getName());
@@ -229,15 +240,18 @@ Platform.runLater(() -> codeArea.position(1, 0).toOffset());
         return loaderTask;
     }
 
-    private LogContent parseLogContent(Task<LogContent> loaderTask, BufferedReader reader, int lineCount) throws IOException {
+    private LogContent parseLogContent(LogContentTask loaderTask, BufferedReader reader, int lineCount) throws IOException {
         final LogContent log = new LogContent();
         String line;
         int linesLoaded = 0;
         while ((line = reader.readLine()) != null) {
             log.addLine(linesLoaded, line);
-// TODO: CML - delegate update of progress
-//            loaderTask.updateProgress(++linesLoaded, lineCount);
+            ++linesLoaded;
+            if (linesLoaded % 100 == 0) {
+                loaderTask.showProgress(linesLoaded, lineCount);
+            }
         }
+        loaderTask.showProgress(lineCount, lineCount);
         return log;
     }
 
