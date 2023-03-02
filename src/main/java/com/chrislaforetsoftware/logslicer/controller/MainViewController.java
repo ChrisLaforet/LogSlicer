@@ -15,9 +15,7 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -45,6 +43,7 @@ public class MainViewController {
 
     private String searchFor;
 
+    @FXML
     public void initialize() {
         codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
@@ -99,6 +98,15 @@ public class MainViewController {
         }
     }
 
+    public void handlePasteLog(ActionEvent actionEvent) {
+        final PasteLogViewDialog dialog = new PasteLogViewDialog(LogSlicer.getStage());
+        dialog.showAndWait().ifPresent(text -> {
+            Task<LogContent> loadFileTask = loadLogContent(text);
+            progressStatus.progressProperty().bind(loadFileTask.progressProperty());
+            loadFileTask.run();
+        });
+    }
+
     public void handleGoToLine(ActionEvent actionEvent) {
         if (logContent == null) {
             return;
@@ -130,25 +138,62 @@ System.out.println("Y scale: " + codeArea.getScaleY());
         });
     }
 
+    private Task<LogContent> loadLogContent(String text) {
+        final Task<LogContent> loaderTask = new Task<>() {
+
+            protected LogContent call() throws Exception {
+                long lineCount = text.codePoints().filter(ch -> ch == '\n').count();
+                try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
+                    final LogContent log = parseLogContent(this, reader, (int)lineCount);
+                    updateProgress(lineCount, lineCount);
+                    return log;                }
+            }
+        };
+        loaderTask.setOnSucceeded(workerStateEvent -> {
+            try {
+                logContent = loaderTask.get();
+                statusMessage.setText("Loaded pasted log file");
+                codeArea.clear();
+                codeArea.replaceText(0, 0, logContent.getText());
+                totalLines.setText(logContent.lineCount() + " lines");
+
+Platform.runLater(() -> codeArea.position(1, 0).toOffset());
+            } catch (InterruptedException | ExecutionException e) {
+                codeArea.clear();
+                codeArea.replaceText(0, 0, "Error showing pasted log file");
+                statusMessage.setText("Error showing pasted log file");
+            }
+        });
+
+        loaderTask.setOnFailed(workerStateEvent -> {
+            codeArea.clear();
+            codeArea.replaceText(0, 0, "Could not parse pasted log file");
+            statusMessage.setText("Failed to parse pasted log file");
+            totalLines.setText("");
+
+            final Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error parsing");
+            alert.setContentText("A problem occurred while parsing pasted log file text");
+            alert.showAndWait();
+        });
+        return loaderTask;
+    }
+
     private Task<LogContent> loadLogContent(File file) {
         final Task<LogContent> loaderTask = new Task<>() {
             @Override
             protected LogContent call() throws Exception {
-                final BufferedReader reader = new BufferedReader(new FileReader(file));
-
                 long lineCount;
                 try (Stream<String> stream = Files.lines(file.toPath())) {
                     lineCount = stream.count();
                 }
 
-                final LogContent log = new LogContent();
-                String line;
-                int linesLoaded = 0;
-                while ((line = reader.readLine()) != null) {
-                    log.addLine(linesLoaded, line);
-                    updateProgress(++linesLoaded, lineCount);
+                try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                    final LogContent log = parseLogContent(this, reader, (int)lineCount);
+                    updateProgress(lineCount, lineCount);
+                    return log;
                 }
-                return log;
             }
         };
 
@@ -182,6 +227,18 @@ Platform.runLater(() -> codeArea.position(1, 0).toOffset());
             alert.showAndWait();
         });
         return loaderTask;
+    }
+
+    private LogContent parseLogContent(Task<LogContent> loaderTask, BufferedReader reader, int lineCount) throws IOException {
+        final LogContent log = new LogContent();
+        String line;
+        int linesLoaded = 0;
+        while ((line = reader.readLine()) != null) {
+            log.addLine(linesLoaded, line);
+// TODO: CML - delegate update of progress
+//            loaderTask.updateProgress(++linesLoaded, lineCount);
+        }
+        return log;
     }
 
     public void handleClose(ActionEvent actionEvent) {

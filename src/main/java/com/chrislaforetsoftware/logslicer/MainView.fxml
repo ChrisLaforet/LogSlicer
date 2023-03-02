@@ -18,7 +18,8 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleOpenLog" text="Open log..." />
+                        <MenuItem mnemonicParsing="false" onAction="#handleOpenLog" text="Open log file..." />
+                        <MenuItem mnemonicParsing="false" onAction="#handlePasteLog" text="Paste log text..." />
                         <MenuItem mnemonicParsing="false" onAction="#handleClose" text="Close" />
                     </items>
                 </Menu>
