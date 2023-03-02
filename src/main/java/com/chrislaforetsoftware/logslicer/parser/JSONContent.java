@@ -1,25 +1,28 @@
 package com.chrislaforetsoftware.logslicer.parser;
 
-public class XMLMarkupContent implements IMarkupContent {
+public class JSONContent implements IMarkupContent {
 
     private final String content;
     private final int startLine;
     private final int endLine;
 
-    public XMLMarkupContent(String content, int startLine, int endLine) {
+    public JSONContent(String content, int startLine, int endLine) {
         this.content = content;
         this.startLine = startLine;
         this.endLine = endLine;
     }
 
+    @Override
     public String getContent() {
         return content;
     }
 
+    @Override
     public int getStartLine() {
         return startLine;
     }
 
+    @Override
     public int getEndLine() {
         return endLine;
     }

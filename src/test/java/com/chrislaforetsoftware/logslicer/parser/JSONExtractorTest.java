@@ -34,8 +34,17 @@ class JSONExtractorTest {
     void givenLogLine_whenContainsEmptyJSON_thenReturnsTag() {
         final LogContent content = new LogContent();
         content.addLine(0, "{}");
-        final IMarkupContent xml = JSONExtractor.testAndExtractFrom(content, 0);
-        assertNotNull(xml);
-        assertEquals("<Testing/>", xml.getContent());
+        final IMarkupContent json = JSONExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(json);
+        assertEquals("{}", json.getContent());
+    }
+
+    @Test
+    void givenLogLine_whenContainsEmptyJSONPrecededByPrologCharacters_thenReturnsTag() {
+        final LogContent content = new LogContent();
+        content.addLine(0, "Now is the time for{}");
+        final IMarkupContent json = JSONExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(json);
+        assertEquals("{}", json.getContent());
     }
 }
