@@ -29,4 +29,13 @@ class JSONExtractorTest {
         content.addLine(0, SIMPLE_XML);
         assertNull(JSONExtractor.testAndExtractFrom(content, 0));
     }
+
+    @Test
+    void givenLogLine_whenContainsEmptyJSON_thenReturnsTag() {
+        final LogContent content = new LogContent();
+        content.addLine(0, "{}");
+        final IMarkupContent xml = JSONExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(xml);
+        assertEquals("<Testing/>", xml.getContent());
+    }
 }
