@@ -31,10 +31,19 @@ class LogContentTest {
     }
 
     @Test
-    void givenTwoLines_whenGetTextInRangeStartFirstLineSecondCharToEndSecondLineNinethChar_thenReturnsTextInRange() {
+    void givenTwoLines_whenGetTextInRangeStartFirstLineSecondCharToEndSecondLineNinthChar_thenReturnsTextInRange() {
         final LogContent content = new LogContent();
         content.addLine(0, ZEROTONINE_STRING);
         content.addLine(1, ZEROTONINE_STRING);
         assertEquals("123456789\n012345678", content.getTextInRange(0, 1, 1, 9));
+    }
+
+    @Test
+    void givenThreeLines_whenGetTextInRangeStartFirstLineSecondCharToEndSecondLineNinthChar_thenReturnsTextInRange() {
+        final LogContent content = new LogContent();
+        content.addLine(0, ZEROTONINE_STRING);
+        content.addLine(1, ZEROTONINE_STRING);
+        content.addLine(2, ZEROTONINE_STRING);
+        assertEquals("123456789\n0123456789\n012345678", content.getTextInRange(0, 1, 2, 9));
     }
 }
