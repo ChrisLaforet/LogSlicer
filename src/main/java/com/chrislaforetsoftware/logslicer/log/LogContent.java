@@ -62,4 +62,13 @@ public class LogContent {
         }
         return sb.toString();
     }
+
+    public String getTextInRange(int startLine, int startIndex, int endLine, int endIndex) {
+        // endLine and endIndex are inclusive
+        if (startLine == endLine) {
+            return getTextFor(startLine).substring(startIndex, endIndex);
+        }
+
+        return "";
+    }
 }

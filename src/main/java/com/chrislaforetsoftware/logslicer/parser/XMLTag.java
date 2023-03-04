@@ -46,7 +46,7 @@ public class XMLTag {
         this.closed = true;
     }
 
-    private int getLineNumber() {
+    public int getLineNumber() {
         return lineNumber;
     }
 

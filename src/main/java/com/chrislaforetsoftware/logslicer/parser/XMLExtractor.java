@@ -20,7 +20,7 @@ public class XMLExtractor {
 
             final XMLTag endTag = findClosingTag(content.getTextFor(lineNumber), lineNumber, tag.getStart(), tag.getTag());
             if (endTag != null) {
-                return new XMLMarkupContent(content.getTextFor(lineNumber).substring(tag.getStart(), endTag.getEnd() + 1), lineNumber, lineNumber);
+                return new XMLMarkupContent(content.getTextInRange(lineNumber, tag.getStart(), lineNumber, endTag.getEnd() + 1), lineNumber, lineNumber);
             }
 
             tag = findStartTag(content.getTextFor(lineNumber), lineNumber, tag.getEnd());
@@ -52,12 +52,25 @@ public class XMLExtractor {
 
         for (XMLTag currentTag : possibleTags) {
             final String closeTag = null;
+            int endLineNumber = lineNumber + 1;
 
+            while (endLineNumber < content.lineCount()) {
+                final String line = content.getTextFor(endLineNumber);
+                int currentIndex = line.indexOf(currentTag.getTag());
+                int endIndex = line.indexOf(closeTag);
+                if (currentIndex >= 0) {
+                    if (endIndex < 0 || endIndex >= 0 && endIndex > currentIndex) {
+                        break;
+                    }
+                }
+                if (endIndex >= 0) {
+                    return new XMLMarkupContent(content.getTextInRange(currentTag.getLineNumber(), currentTag.getStart(), endLineNumber, endIndex + closeTag.length()), currentTag.getLineNumber(), endLineNumber);
+                }
+
+                ++endLineNumber;
+            }
         }
-
-
-
-        return new XMLMarkupContent("<Testing>\n</Testing>", lineNumber, lineNumber);
+        return null;
     }
 
     private static XMLTag findStartTag(String line, int lineNumber, int fromIndex) {
