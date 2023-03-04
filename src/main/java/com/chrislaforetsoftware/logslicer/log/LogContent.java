@@ -19,7 +19,7 @@ public class LogContent {
     public void addLine(int lineNumber, String line) {
         lines.add(new LogLine(lineNumber, line));
         fullText.append(line);
-        fullText.append("\r\n");
+        fullText.append("\n");
     }
 
     public int lineCount() {
@@ -39,5 +39,27 @@ public class LogContent {
 
     public String getText() {
         return fullText.toString();
+    }
+
+    public String getTextInRange(int startLine, int endLine) {
+        // endLine is INCLUSIVE
+        if (lines.size() == 0) {
+            throw new IllegalStateException("no lines exist in the file");
+        }
+        if (startLine < 0 || startLine > endLine || startLine >= lines.size()) {
+            throw new IndexOutOfBoundsException("startLine is invalid");
+        }
+        final StringBuffer sb = new StringBuffer(4096);
+        if (endLine >= lines.size()) {
+            endLine = lines.size() - 1;
+        }
+
+        for (int current = startLine; current <= endLine; current++) {
+            if (current != startLine) {
+                sb.append("\n");
+            }
+            sb.append(lines.get(current));
+        }
+        return sb.toString();
     }
 }

@@ -6,13 +6,15 @@ public class XMLTag {
     public static final char END_BRACKET = '>';
     public static final String END_TAG_SLASH = "/";
 
+    private int lineNumber;
     private int start;
     private int end;
     private String tag;
     private String content;
     private boolean closed;
 
-    public XMLTag(int start, int end, String content) {
+    public XMLTag(int lineNumber, int start, int end, String content) {
+        this.lineNumber = lineNumber;
         this.start = start;
         this.end = end;
         this.content = content.trim();
@@ -42,6 +44,10 @@ public class XMLTag {
 
     public void closeTag() {
         this.closed = true;
+    }
+
+    private int getLineNumber() {
+        return lineNumber;
     }
 
     public int getStart() {

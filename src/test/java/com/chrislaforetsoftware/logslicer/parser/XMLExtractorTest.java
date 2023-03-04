@@ -3,12 +3,18 @@ package com.chrislaforetsoftware.logslicer.parser;
 import com.chrislaforetsoftware.logslicer.log.LogContent;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StringReader;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class XMLExtractorTest {
 
     static private final String SAMPLE_XML_IN_ONE_LINE = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><Testing></Testing></SOAP-ENV:Body></SOAP-ENV:Envelope>";
     public static final String SIMPLE_JSON = "{\"name\":\"John\", \"age\":30, \"car\":null}";
+    public static final String XML_ENDS_ON_NEXT_LINE = "<Testing>\n</Testing>";
 
     @Test
     void givenLogLine_whenTextEmpty_thenReturnsNull() {
@@ -83,5 +89,26 @@ class XMLExtractorTest {
         final IMarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
         assertNotNull(xml);
         assertEquals(SAMPLE_XML_IN_ONE_LINE, xml.getContent());
+    }
+
+    @Test
+    void givenLogLines_whenXMLStartsOnOneLineAndEndsOnNextLine_thenReturnsXML() throws IOException {
+        final LogContent content = parseTextIntoLogContent(XML_ENDS_ON_NEXT_LINE);
+        final IMarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(xml);
+        assertEquals(XML_ENDS_ON_NEXT_LINE, xml.getContent());
+    }
+
+
+    private LogContent parseTextIntoLogContent(String text) throws IOException {
+        final LogContent content = new LogContent();
+        try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
+            String line;
+            int lineNumber = 0;
+            while ((line = reader.readLine()) != null) {
+                content.addLine(lineNumber++, line);
+            }
+        }
+        return content;
     }
 }
