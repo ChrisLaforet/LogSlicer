@@ -10,15 +10,20 @@ public class XMLTag {
     private int start;
     private int end;
     private String tag;
-    private String content;
+    private final String content;
     private boolean closed;
 
-    public XMLTag(int lineNumber, int start, int end, String content) {
+    public XMLTag(int lineNumber, int start, int end, String content, boolean closed) {
         this.lineNumber = lineNumber;
         this.start = start;
         this.end = end;
         this.content = content.trim();
         this.tag = extractTagFromContent();
+        this.closed = closed;
+    }
+
+    public XMLTag(int lineNumber, int start, int end, String content) {
+        this(lineNumber, start, end, content, false);
     }
 
     private String extractTagFromContent() {
