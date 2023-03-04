@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public class LogContent {
 
+    public static final String END_LINE = "\n";
     private final List<LogLine> lines = new ArrayList<>();
 
     private final StringBuilder fullText = new StringBuilder(8192);
@@ -19,7 +20,7 @@ public class LogContent {
     public void addLine(int lineNumber, String line) {
         lines.add(new LogLine(lineNumber, line));
         fullText.append(line);
-        fullText.append("\n");
+        fullText.append(END_LINE);
     }
 
     public int lineCount() {
@@ -56,19 +57,43 @@ public class LogContent {
 
         for (int current = startLine; current <= endLine; current++) {
             if (current != startLine) {
-                sb.append("\n");
+                sb.append(END_LINE);
             }
-            sb.append(lines.get(current));
+            sb.append(lines.get(current).getLine());
         }
         return sb.toString();
     }
 
     public String getTextInRange(int startLine, int startIndex, int endLine, int endIndex) {
         // endLine and endIndex are inclusive
-        if (startLine == endLine) {
-            return getTextFor(startLine).substring(startIndex, endIndex);
+        if (lines.size() == 0) {
+            throw new IllegalStateException("no lines exist in the file");
+        }
+        if (startLine < 0 || startLine > endLine || startLine >= lines.size()) {
+            throw new IndexOutOfBoundsException("startLine is invalid");
+        }
+        if (endLine >= lines.size()) {
+            endLine = lines.size() - 1;
         }
 
-        return "";
+        if (startLine == endLine) {
+            final String text = getTextFor(startLine);
+            if (endIndex > text.length()) {
+                endIndex = text.length();
+            }
+            return text.substring(startIndex, endIndex);
+        }
+
+        final StringBuffer sb = new StringBuffer(4096);
+        sb.append(lines.get(startLine).getLine().substring(startIndex));
+
+        for (int current = startLine + 1; current < endLine; current++) {
+            sb.append(END_LINE);
+            sb.append(lines.get(current).getLine());
+        }
+        sb.append(END_LINE);
+        sb.append(lines.get(endLine).getLine().substring(0, endIndex));
+
+        return sb.toString();
     }
 }
