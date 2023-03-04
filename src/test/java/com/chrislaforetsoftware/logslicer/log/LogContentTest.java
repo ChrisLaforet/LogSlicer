@@ -46,4 +46,5 @@ class LogContentTest {
         content.addLine(2, ZEROTONINE_STRING);
         assertEquals("123456789\n0123456789\n012345678", content.getTextInRange(0, 1, 2, 9));
     }
+
 }

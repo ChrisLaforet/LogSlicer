@@ -51,7 +51,7 @@ public class XMLExtractor {
         // TODO: CML - prescan/dynamically cache tags and save in lookup list for LogContent?
 
         for (XMLTag currentTag : possibleTags) {
-            final String closeTag = null;
+            final String closeTag = formatEndTagFor(currentTag.getTag());
             int endLineNumber = lineNumber + 1;
 
             while (endLineNumber < content.lineCount()) {

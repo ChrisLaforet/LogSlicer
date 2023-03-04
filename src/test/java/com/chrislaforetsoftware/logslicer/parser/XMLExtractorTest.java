@@ -15,6 +15,8 @@ class XMLExtractorTest {
     static private final String SAMPLE_XML_IN_ONE_LINE = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body><Testing></Testing></SOAP-ENV:Body></SOAP-ENV:Envelope>";
     public static final String SIMPLE_JSON = "{\"name\":\"John\", \"age\":30, \"car\":null}";
     public static final String XML_ENDS_ON_NEXT_LINE = "<Testing>\n</Testing>";
+    public static final String XML_ENDS_ON_THIRD_LINE = "<Testing>\nBlah Blah Blah\n</Testing>";
+
 
     @Test
     void givenLogLine_whenTextEmpty_thenReturnsNull() {
@@ -99,6 +101,13 @@ class XMLExtractorTest {
         assertEquals(XML_ENDS_ON_NEXT_LINE, xml.getContent());
     }
 
+    @Test
+    void givenLogLines_whenXMLStartsOnOneLineAndEndsOnThirdLine_thenReturnsXML() throws IOException {
+        final LogContent content = parseTextIntoLogContent(XML_ENDS_ON_THIRD_LINE);
+        final IMarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(xml);
+        assertEquals(XML_ENDS_ON_THIRD_LINE, xml.getContent());
+    }
 
     private LogContent parseTextIntoLogContent(String text) throws IOException {
         final LogContent content = new LogContent();
