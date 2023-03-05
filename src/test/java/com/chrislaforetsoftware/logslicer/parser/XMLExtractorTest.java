@@ -17,7 +17,6 @@ class XMLExtractorTest {
     public static final String XML_ENDS_ON_NEXT_LINE = "<Testing>\n</Testing>";
     public static final String XML_ENDS_ON_THIRD_LINE = "<Testing>\nBlah Blah Blah\n</Testing>";
 
-
     @Test
     void givenLogLine_whenTextEmpty_thenReturnsNull() {
         final LogContent content = new LogContent();

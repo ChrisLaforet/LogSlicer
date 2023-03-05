@@ -1,9 +1,12 @@
 package com.chrislaforetsoftware.logslicer.log;
 
+import com.chrislaforetsoftware.logslicer.parser.XMLTag;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,14 +31,34 @@ public class LogContent {
     }
 
     public String getTextFor(int lineNumber) {
-        if (lines.size() < lineNumber) {
-            return null;
-        }
-        Optional<LogLine> match = lines.stream().filter(logLine -> logLine.getLineNumber() == lineNumber).findFirst();
+        Optional<LogLine> match = getLogLineFor(lineNumber);
         if (match.isEmpty()) {
             return null;
         }
         return match.get().getLine();
+    }
+
+    public List<XMLTag> getXmlStartTagsFor(int lineNumber) {
+        Optional<LogLine> match = getLogLineFor(lineNumber);
+        if (match.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return match.get().getXmlStartTags();
+    }
+
+    public List<XMLTag> getXmlEndTagsFor(int lineNumber) {
+        Optional<LogLine> match = getLogLineFor(lineNumber);
+        if (match.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return match.get().getXmlEndTags();
+    }
+
+    private Optional<LogLine> getLogLineFor(int lineNumber) {
+        if (lines.size() < lineNumber) {
+            return Optional.empty();
+        }
+        return lines.stream().filter(logLine -> logLine.getLineNumber() == lineNumber).findFirst();
     }
 
     public String getText() {

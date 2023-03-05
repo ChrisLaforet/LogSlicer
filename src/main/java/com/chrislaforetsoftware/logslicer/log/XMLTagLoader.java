@@ -33,7 +33,11 @@ class XMLTagLoader {
         if (end >= 0) {
             String tagString = line.substring(start + 1, end).trim();
             boolean isClosed = false;
-            if (tagString.length() >= 1 && !tagString.startsWith(XMLTag.END_TAG_SLASH)) {
+            if (tagString.length() >= 1) {
+                if (tagString.startsWith(XMLTag.END_TAG_SLASH)) {
+                    return findStartTag(line, lineNumber, start + 1);       // recurse to find an actual tag or nothing!
+                }
+
                 if (tagString.endsWith(XMLTag.END_TAG_SLASH)) {
                     isClosed = true;
                     tagString = tagString.substring(0, tagString.length() - 1).trim();

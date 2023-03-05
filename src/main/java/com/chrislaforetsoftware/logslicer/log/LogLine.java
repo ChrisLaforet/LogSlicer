@@ -10,11 +10,13 @@ public class LogLine {
     private String line;
     private int lineNumber;
 
-    private List<XMLTag> xmlTagList = new ArrayList<>();
+    private List<XMLTag> xmlStartTags = new ArrayList<>();
+    private List<XMLTag> xmlEndTags = new ArrayList<>();
 
     public LogLine(int lineNumber, String line) {
         this.lineNumber = lineNumber;
         this.line = line;
+        XMLTagLoader.discoverStartAndEndXMLTagsIn(line, lineNumber, xmlStartTags, xmlEndTags);
     }
 
     public String getLine() {
@@ -23,5 +25,13 @@ public class LogLine {
 
     public int getLineNumber() {
         return this.lineNumber;
+    }
+
+    public List<XMLTag> getXmlStartTags() {
+        return xmlStartTags;
+    }
+
+    public List<XMLTag> getXmlEndTags() {
+        return xmlEndTags;
     }
 }
