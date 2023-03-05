@@ -214,7 +214,8 @@ System.out.println("Y scale: " + codeArea.getScaleY());
 
                 progressStatus.progressProperty().unbind();
 
-                Platform.runLater(() -> codeArea.position(1, 0).toOffset());
+                Platform.runLater(() -> codeArea.moveTo(0));
+                Platform.runLater(() -> codeArea.requestFollowCaret());
             } catch (InterruptedException | ExecutionException e) {
                 codeArea.clear();
                 codeArea.replaceText(0, 0, "Could not load file from: " + file.getAbsolutePath());
