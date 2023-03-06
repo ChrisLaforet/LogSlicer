@@ -10,6 +10,8 @@ public class LogLine {
     private String line;
     private int lineNumber;
 
+    // TODO: CML - add XML content here for all affected lines
+
     private List<XMLTag> xmlStartTags = new ArrayList<>();
     private List<XMLTag> xmlEndTags = new ArrayList<>();
 
