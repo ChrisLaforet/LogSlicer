@@ -128,18 +128,14 @@ public class MainViewController {
             try {
                 int lineNumber = Integer.parseInt(lineString.trim());
                 if (lineNumber > 0 && lineNumber <= logContent.lineCount()) {
-                    codeArea.getCaretPosition();
-                    System.out.println(codeArea.getCaretPosition());
-                    codeArea.requestFollowCaret();
-org.reactfx.value.Val<Double> val = virtualizedScrollPane.totalHeightEstimateProperty();
-System.out.println("Height: " + val.getValue());
-System.out.println("Code Height: " + codeArea.getMaxHeight());
-System.out.println("Y scale: " + codeArea.getScaleY());
 
-                    //Platform.runLater(() -> codeArea.position(lineNumber, 0).toOffset());
+                    Platform.runLater(() -> {
+                        codeArea.moveTo(lineNumber - 1, 0);
+                        codeArea.requestFollowCaret();
+                    });
                 }
             } catch (Exception e) {
-
+                // handles error on parsing
             }
         });
     }
@@ -164,7 +160,10 @@ System.out.println("Y scale: " + codeArea.getScaleY());
 
                 progressStatus.progressProperty().unbind();
 
-                Platform.runLater(() -> codeArea.position(1, 0).toOffset());
+                Platform.runLater(() -> {
+                    codeArea.moveTo(0);
+                    codeArea.requestFollowCaret();
+                });
             } catch (InterruptedException | ExecutionException e) {
                 codeArea.clear();
                 codeArea.replaceText(0, 0, "Error showing pasted log file");
@@ -214,8 +213,10 @@ System.out.println("Y scale: " + codeArea.getScaleY());
 
                 progressStatus.progressProperty().unbind();
 
-                Platform.runLater(() -> codeArea.moveTo(0));
-                Platform.runLater(() -> codeArea.requestFollowCaret());
+                Platform.runLater(() -> {
+                    codeArea.moveTo(0);
+                    codeArea.requestFollowCaret();
+                });
             } catch (InterruptedException | ExecutionException e) {
                 codeArea.clear();
                 codeArea.replaceText(0, 0, "Could not load file from: " + file.getAbsolutePath());
@@ -259,8 +260,4 @@ System.out.println("Y scale: " + codeArea.getScaleY());
     public void handleClose(ActionEvent actionEvent) {
         Platform.exit();
     }
-
-//    public MainView() {
-//        menuBar.prefWidthProperty().bind(mainContainer.prefWidthProperty());
-//    }
 }
