@@ -1,1 +1,7 @@
 # LogSlicer
+
+This is a small application to simplify loading logs and extracting XML and/or JSON from the contents of different log lines.  It originally was going to be a skunkworks project for my company since both developers and QA folks constantly are digging out structured requests and responses from application logs.  Some of these long log lines contain embedded structured data while others provide timestamp and other data and then embed the data across many (sometimes thousands) of lines.  After a while, it can become quite a chore to do searches in editors, mark the start and end of data, copy and then move to a structured browser (such as Oxygen).
+
+LogSlicer will import a log from a file or from pasted text, divide it on newlines and then attempt to recognized well-formed XML and JSON.  If any is found on a line, then the line will reflect this and the structured data will be available easily with a button adjacent to that line.
+
+This project is also an intro to JavaFX for me.  While I could have developed in .NET, I wanted this to be readily useable on other platforms.  Thus, I chose Java and JavaFX as the windowing library (sorry, I don't really like Swing and have not worked with SWT for almost 2 decades).
