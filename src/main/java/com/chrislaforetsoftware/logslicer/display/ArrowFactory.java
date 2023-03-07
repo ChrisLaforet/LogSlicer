@@ -15,7 +15,7 @@ import java.util.function.IntFunction;
 public class ArrowFactory implements IntFunction<Node> {
 	private final ObservableValue<Integer> shownLine;
 
-	ArrowFactory(ObservableValue<Integer> shownLine) {
+	public ArrowFactory(ObservableValue<Integer> shownLine) {
 		this.shownLine = shownLine;
 	}
 
