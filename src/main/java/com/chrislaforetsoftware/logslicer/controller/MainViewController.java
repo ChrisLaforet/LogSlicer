@@ -174,7 +174,7 @@ public class MainViewController {
         if (content != null) {
             System.err.println(content.getContent());
         }
-        System.err.println("XML button " + lineNumber);
+System.err.println("XML button " + lineNumber);
     }
 
     private Task<LogContent> loadLogContent(String text) {
