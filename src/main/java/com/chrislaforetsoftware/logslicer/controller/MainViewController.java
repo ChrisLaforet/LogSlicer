@@ -1,6 +1,7 @@
 package com.chrislaforetsoftware.logslicer.controller;
 
 import com.chrislaforetsoftware.logslicer.LogSlicer;
+import com.chrislaforetsoftware.logslicer.display.ArrowFactory;
 import com.chrislaforetsoftware.logslicer.display.ButtonFactory;
 import com.chrislaforetsoftware.logslicer.display.LogContentTask;
 import com.chrislaforetsoftware.logslicer.log.LogContent;
@@ -52,16 +53,26 @@ public class MainViewController {
 
     private String searchFor;
 
+
+    public LogContent getLogContent() {
+        return this.logContent;
+    }
+
     @FXML
     public void initialize() {
         codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+        codeArea.clear();
+        codeArea.setEditable(false);
 
-        IntFunction<Node> numberFactory = LineNumberFactory.get(codeArea);
-        ButtonFactory buttonFactory = new ButtonFactory(codeArea.currentParagraphProperty());
+        final IntFunction<Node> numberFactory = LineNumberFactory.get(codeArea);
+        final ButtonFactory buttonFactory = new ButtonFactory(codeArea.currentParagraphProperty(), this);
+        final IntFunction<Node> arrowFactory = new ArrowFactory(codeArea.currentParagraphProperty(), this);
+
         IntFunction<Node> graphicFactory = line -> {
             HBox hbox = new HBox(
                     numberFactory.apply(line),
+                    arrowFactory.apply(line),
                     buttonFactory.apply(logContent, line)
             );
             hbox.setAlignment(Pos.CENTER_LEFT);
@@ -152,6 +163,18 @@ public class MainViewController {
                 // handles error on parsing
             }
         });
+    }
+
+    public void handleXmlButton(ActionEvent actionEvent, int lineNumber) {
+        if (logContent == null) {
+            return;
+        }
+
+        final var content = logContent.getXmlContentFor(lineNumber);
+        if (content != null) {
+            System.err.println(content.getContent());
+        }
+        System.err.println("XML button " + lineNumber);
     }
 
     private Task<LogContent> loadLogContent(String text) {

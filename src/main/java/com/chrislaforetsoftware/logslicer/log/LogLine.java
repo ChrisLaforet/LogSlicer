@@ -51,6 +51,10 @@ public class LogLine {
         this.xmlContent = xmlContent;
     }
 
+    public XMLMarkupContent getXmlContent() {
+        return this.xmlContent;
+    }
+
     public boolean hasJson() {
         return jsonContent != null;
     }

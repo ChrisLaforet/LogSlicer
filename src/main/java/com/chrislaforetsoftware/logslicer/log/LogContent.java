@@ -136,6 +136,14 @@ public class LogContent {
         match.ifPresent(logLine -> logLine.setXml(content));
     }
 
+    public XMLMarkupContent getXmlContentFor(int lineNumber) {
+        Optional<LogLine> match = getLogLineFor(lineNumber);
+        if (match.isPresent()) {
+            return match.get().getXmlContent();
+        }
+        return null;
+    }
+
     public boolean hasJson(int lineNumber) {
         return false;
     }

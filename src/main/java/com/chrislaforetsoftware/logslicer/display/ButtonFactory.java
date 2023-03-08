@@ -1,8 +1,11 @@
 package com.chrislaforetsoftware.logslicer.display;
 
 
+import com.chrislaforetsoftware.logslicer.controller.MainViewController;
 import com.chrislaforetsoftware.logslicer.log.LogContent;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
@@ -17,14 +20,16 @@ import java.util.function.IntFunction;
  */
 public class ButtonFactory {
 	private final ObservableValue<Integer> shownLine;
+	private final MainViewController controller;
 	private final Font font;
 
-	public ButtonFactory(ObservableValue<Integer> shownLine) {
+	public ButtonFactory(ObservableValue<Integer> shownLine, MainViewController controller) {
 		this.shownLine = shownLine;
+		this.controller = controller;
 		this.font = new Font("Arial", 8.0);
 	}
 
-	public Node apply(LogContent content,int lineNumber) {
+	public Node apply(LogContent content, int lineNumber) {
 		Button button = new Button();
 		button.setFont(font);
 		button.setText("JSON");
@@ -39,6 +44,15 @@ public class ButtonFactory {
 				button.setText(" XML ");
 				button.setStyle("-fx-border-color: lightgreen");
 				button.setStyle("-fx-text-base-color: green");
+
+				final EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+					public void handle(ActionEvent e)
+					{
+						controller.handleXmlButton(e, lineNumber);
+					}
+				};
+
+				button.setOnAction(event);
 
 			} else {
 				button.setStyle("-fx-border-color: red");
