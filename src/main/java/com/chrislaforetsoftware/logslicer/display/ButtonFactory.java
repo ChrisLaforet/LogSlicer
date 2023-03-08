@@ -1,6 +1,7 @@
 package com.chrislaforetsoftware.logslicer.display;
 
 
+import com.chrislaforetsoftware.logslicer.log.LogContent;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -14,7 +15,7 @@ import java.util.function.IntFunction;
 /**
  * Given the line number, return a node (graphic) to display to the left of a line.
  */
-public class ButtonFactory implements IntFunction<Node> {
+public class ButtonFactory {
 	private final ObservableValue<Integer> shownLine;
 	private final Font font;
 
@@ -23,30 +24,31 @@ public class ButtonFactory implements IntFunction<Node> {
 		this.font = new Font("Arial", 8.0);
 	}
 
-	@Override
-	public Node apply(int lineNumber) {
+	public Node apply(LogContent content,int lineNumber) {
 		Button button = new Button();
 		button.setFont(font);
-		//button.setStyle("-fx-background-color: #0000aa");
-		button.setStyle("-fx-border-color: green");
-		//button.setPrefHeight(5.0);
-		//button.setPrefHeight();
-		button.setText("XML");
+		button.setText("JSON");
 
-		button.setVisible(lineNumber % 2 == 0);
+		if (content != null
+				&& (content.hasXml(lineNumber) || content.hasJson(lineNumber))) {
+			//button.setStyle("-fx-background-color: #0000aa");
+
+			//button.setPrefHeight(5.0);
+			//button.setPrefHeight();
+			if (content.hasXml(lineNumber)) {
+				button.setText(" XML ");
+				button.setStyle("-fx-border-color: lightgreen");
+				button.setStyle("-fx-text-base-color: green");
+
+			} else {
+				button.setStyle("-fx-border-color: red");
+				button.setStyle("-fx-text-base-color: darkred");
+			}
+
+			button.setVisible(true);
+		} else {
+			button.setVisible(false);
+		}
 		return button;
-
-
-//		Polygon triangle = new Polygon(0.0, 0.0, 10.0, 5.0, 0.0, 10.0);
-//		triangle.setFill(Color.GREEN);
-//
-//		ObservableValue<Boolean> visible = Val.map(shownLine, sl -> sl == lineNumber);
-//
-//		triangle.visibleProperty().bind(
-//				Val.flatMap(triangle.sceneProperty(), scene -> {
-//					return scene != null ? visible : Val.constant(false);
-//				}));
-//
-//		return triangle;
 	}
 }

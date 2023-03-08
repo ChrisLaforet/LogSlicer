@@ -1,5 +1,7 @@
 package com.chrislaforetsoftware.logslicer.log;
 
+import com.chrislaforetsoftware.logslicer.parser.JSONContent;
+import com.chrislaforetsoftware.logslicer.parser.XMLMarkupContent;
 import com.chrislaforetsoftware.logslicer.parser.XMLTag;
 
 import java.io.BufferedReader;
@@ -18,6 +20,7 @@ public class LogContent {
     private final StringBuilder fullText = new StringBuilder(8192);
 
     public LogContent() {
+        // do nothing
     }
 
     public void addLine(int lineNumber, String line) {
@@ -118,5 +121,27 @@ public class LogContent {
         sb.append(lines.get(endLine).getLine().substring(0, endIndex));
 
         return sb.toString();
+    }
+
+    public boolean hasXml(int lineNumber) {
+        Optional<LogLine> match = getLogLineFor(lineNumber);
+        if (match.isEmpty()) {
+            return false;
+        }
+        return match.get().hasXml();
+    }
+
+    public void setXml(int lineNumber, XMLMarkupContent content) {
+        Optional<LogLine> match = getLogLineFor(lineNumber);
+        match.ifPresent(logLine -> logLine.setXml(content));
+    }
+
+    public boolean hasJson(int lineNumber) {
+        return false;
+    }
+
+    public void setJson(int lineNumber, JSONContent content) {
+        Optional<LogLine> match = getLogLineFor(lineNumber);
+        match.ifPresent(logLine -> logLine.setJson(content));
     }
 }

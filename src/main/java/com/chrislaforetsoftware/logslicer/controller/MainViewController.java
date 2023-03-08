@@ -1,15 +1,22 @@
 package com.chrislaforetsoftware.logslicer.controller;
 
 import com.chrislaforetsoftware.logslicer.LogSlicer;
+import com.chrislaforetsoftware.logslicer.display.ButtonFactory;
 import com.chrislaforetsoftware.logslicer.display.LogContentTask;
 import com.chrislaforetsoftware.logslicer.log.LogContent;
+import com.chrislaforetsoftware.logslicer.parser.IMarkupContent;
+import com.chrislaforetsoftware.logslicer.parser.JSONContent;
+import com.chrislaforetsoftware.logslicer.parser.JSONExtractor;
+import com.chrislaforetsoftware.logslicer.parser.XMLExtractor;
+import com.chrislaforetsoftware.logslicer.parser.XMLMarkupContent;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -20,6 +27,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
 public class MainViewController {
@@ -48,19 +56,25 @@ public class MainViewController {
     public void initialize() {
         codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+
+        IntFunction<Node> numberFactory = LineNumberFactory.get(codeArea);
+        ButtonFactory buttonFactory = new ButtonFactory(codeArea.currentParagraphProperty());
+        IntFunction<Node> graphicFactory = line -> {
+            HBox hbox = new HBox(
+                    numberFactory.apply(line),
+                    buttonFactory.apply(logContent, line)
+            );
+            hbox.setAlignment(Pos.CENTER_LEFT);
+            return hbox;
+        };
+        codeArea.setParagraphGraphicFactory(graphicFactory);
+
         // codeArea.setContextMenu( new DefaultContextMenu() );
 
         virtualizedScrollPane = new VirtualizedScrollPane<>(codeArea);
         virtualizedScrollPane.autosize();
-//        virtualizedScrollPane.setMaxHeight(Double.MAX_VALUE);
-//        virtualizedScrollPane.setMaxWidth(Double.MAX_VALUE);
-        anchorPane.getChildren().add(virtualizedScrollPane);
 
-//        new VirtualizedScrollPane<>(codeArea);
-//        scene.getStylesheets().add(JavaKeywordsAsyncDemo.class.getResource("java-keywords.css").toExternalForm());
-//        primaryStage.setScene(scene);
-//        primaryStage.setTitle("Java Keywords Demo");
-//        primaryStage.show();
+        anchorPane.getChildren().add(virtualizedScrollPane);
     }
 
     public void handleSearch(ActionEvent actionEvent) {
@@ -243,18 +257,42 @@ public class MainViewController {
     }
 
     private LogContent parseLogContent(LogContentTask loaderTask, BufferedReader reader, int lineCount) throws IOException {
-        final LogContent log = new LogContent();
+        final LogContent content = new LogContent();
         String line;
         int linesLoaded = 0;
         while ((line = reader.readLine()) != null) {
-            log.addLine(linesLoaded, line);
+            content.addLine(linesLoaded, line);
             ++linesLoaded;
             if (linesLoaded % 100 == 0) {
                 loaderTask.showProgress(linesLoaded, lineCount);
             }
         }
+
+        int currentLine = 0;
+        while (currentLine < content.lineCount()) {
+            IMarkupContent xml = XMLExtractor.testAndExtractFrom(content, currentLine);
+            if (xml != null) {
+                for (int lineNumber = xml.getStartLine(); lineNumber <= xml.getEndLine(); lineNumber++) {
+                    content.setXml(lineNumber, (XMLMarkupContent)xml);
+                }
+                currentLine = xml.getEndLine() + 1;
+            } else {
+                IMarkupContent json = null;
+//                IMarkupContent json = JSONExtractor.testAndExtractFrom(content, currentLine);
+                if (json != null) {
+                    for (int lineNumber = json.getStartLine(); lineNumber <= json.getEndLine(); lineNumber++) {
+                        content.setJson(lineNumber, (JSONContent)json);
+                    }
+                } else {
+                    ++currentLine;
+                }
+            }
+
+        }
+
+
         loaderTask.showProgress(lineCount, lineCount);
-        return log;
+        return content;
     }
 
     public void handleClose(ActionEvent actionEvent) {

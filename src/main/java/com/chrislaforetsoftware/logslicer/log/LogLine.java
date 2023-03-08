@@ -1,5 +1,8 @@
 package com.chrislaforetsoftware.logslicer.log;
 
+import com.chrislaforetsoftware.logslicer.parser.IMarkupContent;
+import com.chrislaforetsoftware.logslicer.parser.JSONContent;
+import com.chrislaforetsoftware.logslicer.parser.XMLMarkupContent;
 import com.chrislaforetsoftware.logslicer.parser.XMLTag;
 
 import java.util.ArrayList;
@@ -14,6 +17,9 @@ public class LogLine {
 
     private List<XMLTag> xmlStartTags = new ArrayList<>();
     private List<XMLTag> xmlEndTags = new ArrayList<>();
+
+    private XMLMarkupContent xmlContent;
+    private JSONContent jsonContent;
 
     public LogLine(int lineNumber, String line) {
         this.lineNumber = lineNumber;
@@ -35,5 +41,21 @@ public class LogLine {
 
     public List<XMLTag> getXmlEndTags() {
         return xmlEndTags;
+    }
+
+    public boolean hasXml() {
+        return xmlContent != null;
+    }
+
+    public void setXml(XMLMarkupContent xmlContent) {
+        this.xmlContent = xmlContent;
+    }
+
+    public boolean hasJson() {
+        return jsonContent != null;
+    }
+
+    public void setJson(JSONContent jsonContent) {
+        this.jsonContent = jsonContent;
     }
 }
