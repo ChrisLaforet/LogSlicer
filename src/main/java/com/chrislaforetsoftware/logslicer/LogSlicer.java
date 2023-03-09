@@ -19,7 +19,6 @@ public class LogSlicer extends Application {
         stage.setTitle("LogSlicer: Parse components from logs");
         stage.setScene(new Scene(parent, 800, 500));
 
-
         LogSlicer.stage = stage;
         stage.show();
 

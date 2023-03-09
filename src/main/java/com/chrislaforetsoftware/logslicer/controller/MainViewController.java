@@ -173,8 +173,10 @@ public class MainViewController {
         final var content = logContent.getXmlContentFor(lineNumber);
         if (content != null) {
             System.err.println(content.getContent());
+
+            final ContentViewDialog dialog = new ContentViewDialog(LogSlicer.getStage(), lineNumber, content);
+            dialog.showAndWait();
         }
-System.err.println("XML button " + lineNumber);
     }
 
     private Task<LogContent> loadLogContent(String text) {
