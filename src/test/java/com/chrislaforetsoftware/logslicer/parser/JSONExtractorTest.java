@@ -10,6 +10,7 @@ class JSONExtractorTest {
     static private final String SIMPLE_XML = "<Testing></Testing>";
     static private final String VALID_SINGLE_LINE_JSON = "{\"menu\":{\"id\":\"file\",\"value\":\"File\",\"popup\":{\"menuitem\":[{\"value\":\"New\",\"onclick\":\"CreateNewDoc()\"},{\"value\":\"Open\",\"onclick\":\"OpenDoc()\"},{\"value\":\"Close\",\"onclick\":\"CloseDoc()\"}]}}}";
     static private final String INVALID_SINGLE_LINE_JSON = "{\"id\":\"file\"  \"value\":\"File\"}";
+    static private final String LIVE_SINGLE_LINE_JSON = "{\"search\":{\"filter\":true,\"family\":[{\"age\":33,\"children\":1,\"disabilities\":[\"NONE\"]}],\"familyCodes\":[\"MARRIED\",\"INSURED\"],\"nextBirthday\":{\"date\":\"2022-10-26T0:00\",\"cakeOption\":{\"code\":\"CHOC_GANACHE\",\"type\":\"12_INCH_ROUND\"},\"iceCreamOption\":{\"code\":\"VAN_SWIRL\",\"type\":\"RASPBERRY_SWIRL\"}}}}";
 
     @Test
     void givenLogLine_whenTextEmpty_thenReturnsNull() {
@@ -83,5 +84,14 @@ class JSONExtractorTest {
         content.addLine(0, INVALID_SINGLE_LINE_JSON);
         final IMarkupContent json = JSONExtractor.testAndExtractFrom(content, 0);
         assertNull(json);
+    }
+
+    @Test
+    void givenLogLine_whenContainsFormedSingleLineJSON_thenReturnsTag() {
+        final LogContent content = new LogContent();
+        content.addLine(0, LIVE_SINGLE_LINE_JSON);
+        final IMarkupContent json = JSONExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(json);
+        assertEquals(LIVE_SINGLE_LINE_JSON, json.getContent());
     }
 }

@@ -320,12 +320,15 @@ public class MainViewController {
                 }
                 currentLine = xml.getEndLine() + 1;
             } else {
-                //IMarkupContent json = null;
+                if (currentLine == 7) {
+                    System.err.println("7");
+                }
                 IMarkupContent json = JSONExtractor.testAndExtractFrom(content, currentLine);
                 if (json != null) {
                     for (int lineNumber = json.getStartLine(); lineNumber <= json.getEndLine(); lineNumber++) {
                         content.setJson(lineNumber, (JSONContent)json);
                     }
+                    currentLine = json.getEndLine() + 1;
                 } else {
                     ++currentLine;
                 }
