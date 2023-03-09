@@ -52,7 +52,8 @@ public class MainViewController {
     private CodeArea codeArea;
 
     private String searchFor;
-
+    private int searchLastLine;
+    private int searchLastColumn;
 
     public LogContent getLogContent() {
         return this.logContent;
@@ -101,6 +102,9 @@ public class MainViewController {
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(searchString -> {
             searchFor = searchString;
+            searchLastColumn = -1;
+            searchLastLine = -1;
+
 //            System.out.println("Your name: " + searchString)
         });
     }
