@@ -41,7 +41,7 @@ public class ButtonFactory {
 			//button.setPrefHeight(5.0);
 			//button.setPrefHeight();
 			if (content.hasXml(lineNumber)) {
-				button.setText(" XML ");
+				button.setText(" XML  ");
 				button.setStyle("-fx-border-color: lightgreen");
 				button.setStyle("-fx-text-base-color: green");
 
@@ -55,8 +55,18 @@ public class ButtonFactory {
 				button.setOnAction(event);
 
 			} else {
+				button.setText(" JSON ");
 				button.setStyle("-fx-border-color: red");
 				button.setStyle("-fx-text-base-color: darkred");
+
+				final EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+					public void handle(ActionEvent e)
+					{
+						controller.handleJsonButton(e, lineNumber);
+					}
+				};
+
+				button.setOnAction(event);
 			}
 
 			button.setVisible(true);

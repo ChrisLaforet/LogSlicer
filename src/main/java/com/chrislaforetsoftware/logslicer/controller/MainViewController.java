@@ -105,7 +105,7 @@ public class MainViewController {
             searchLastColumn = -1;
             searchLastLine = -1;
 
-//            System.out.println("Your name: " + searchString)
+//            System.out.println("Your search string: " + searchString)
         });
     }
 
@@ -175,6 +175,20 @@ public class MainViewController {
         }
 
         final var content = logContent.getXmlContentFor(lineNumber);
+        if (content != null) {
+            System.err.println(content.getContent());
+
+            final ContentViewDialog dialog = new ContentViewDialog(LogSlicer.getStage(), lineNumber, content);
+            dialog.showAndWait();
+        }
+    }
+
+    public void handleJsonButton(ActionEvent actionEvent, int lineNumber) {
+        if (logContent == null) {
+            return;
+        }
+
+        final var content = logContent.getJsonContentFor(lineNumber);
         if (content != null) {
             System.err.println(content.getContent());
 
@@ -306,8 +320,8 @@ public class MainViewController {
                 }
                 currentLine = xml.getEndLine() + 1;
             } else {
-                IMarkupContent json = null;
-//                IMarkupContent json = JSONExtractor.testAndExtractFrom(content, currentLine);
+                //IMarkupContent json = null;
+                IMarkupContent json = JSONExtractor.testAndExtractFrom(content, currentLine);
                 if (json != null) {
                     for (int lineNumber = json.getStartLine(); lineNumber <= json.getEndLine(); lineNumber++) {
                         content.setJson(lineNumber, (JSONContent)json);

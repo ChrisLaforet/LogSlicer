@@ -1,5 +1,6 @@
 package com.chrislaforetsoftware.logslicer.controller;
 
+import com.chrislaforetsoftware.logslicer.parser.JSONContent;
 import com.chrislaforetsoftware.logslicer.parser.XMLMarkupContent;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -21,7 +22,15 @@ public class ContentViewDialog extends Dialog<String> {
     @FXML
     private TextArea contentText;
 
-    public ContentViewDialog(Window owner, int lineNumber, XMLMarkupContent content) {
+    public ContentViewDialog(Window owner, int lineNumber, JSONContent jsonContent) {
+        show(owner, lineNumber, jsonContent.getContent());
+    }
+
+    public ContentViewDialog(Window owner, int lineNumber, XMLMarkupContent xmlContent) {
+        show(owner, lineNumber, xmlContent.getContent());
+    }
+
+    private void show(Window owner, int lineNumber, String content) {
         try {
             final FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/com/chrislaforetsoftware/logslicer/ContentView.fxml"));
@@ -29,7 +38,7 @@ public class ContentViewDialog extends Dialog<String> {
 
             final DialogPane dialogPane = loader.load();
 
-            contentText.setText(content.getContent());
+            contentText.setText(content);
             contentText.setEditable(false);
 
             initOwner(owner);
@@ -42,7 +51,7 @@ public class ContentViewDialog extends Dialog<String> {
                 if (Objects.equals(ButtonBar.ButtonData.OTHER, buttonType.getButtonData())) {
                     final Clipboard clipboard = Clipboard.getSystemClipboard();
                     final ClipboardContent clipboardContent = new ClipboardContent();
-                    clipboardContent.putString(content.getContent());
+                    clipboardContent.putString(content);
                     clipboard.setContent(clipboardContent);
                 }
                 return null;

@@ -62,4 +62,8 @@ public class LogLine {
     public void setJson(JSONContent jsonContent) {
         this.jsonContent = jsonContent;
     }
+
+    public JSONContent getJsonContent() {
+        return this.jsonContent;
+    }
 }

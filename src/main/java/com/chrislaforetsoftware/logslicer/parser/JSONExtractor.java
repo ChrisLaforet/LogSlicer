@@ -4,7 +4,7 @@ import com.chrislaforetsoftware.logslicer.log.LogContent;
 
 public class JSONExtractor {
     public static IMarkupContent testAndExtractFrom(LogContent content, int lineNumber) {
-
+System.err.println(lineNumber + " - " + content.getTextFor(lineNumber));
         final String line = content.getTextFor(lineNumber);
         int openBraceOffset = findOpenBraceAfter(line, 0);
         while (openBraceOffset >= 0) {

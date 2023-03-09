@@ -4,9 +4,6 @@ import com.chrislaforetsoftware.logslicer.parser.JSONContent;
 import com.chrislaforetsoftware.logslicer.parser.XMLMarkupContent;
 import com.chrislaforetsoftware.logslicer.parser.XMLTag;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,8 +12,8 @@ import java.util.Optional;
 public class LogContent {
 
     public static final String END_LINE = "\n";
-    private final List<LogLine> lines = new ArrayList<>();
 
+    private final List<LogLine> lines = new ArrayList<>();
     private final StringBuilder fullText = new StringBuilder(8192);
 
     public LogContent() {
@@ -145,11 +142,23 @@ public class LogContent {
     }
 
     public boolean hasJson(int lineNumber) {
-        return false;
+        Optional<LogLine> match = getLogLineFor(lineNumber);
+        if (match.isEmpty()) {
+            return false;
+        }
+        return match.get().hasJson();
     }
 
     public void setJson(int lineNumber, JSONContent content) {
         Optional<LogLine> match = getLogLineFor(lineNumber);
         match.ifPresent(logLine -> logLine.setJson(content));
+    }
+
+    public JSONContent getJsonContentFor(int lineNumber) {
+        Optional<LogLine> match = getLogLineFor(lineNumber);
+        if (match.isPresent()) {
+            return match.get().getJsonContent();
+        }
+        return null;
     }
 }
