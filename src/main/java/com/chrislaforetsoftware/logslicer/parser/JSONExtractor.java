@@ -22,7 +22,11 @@ public class JSONExtractor {
         }
 
 //        if (firstOpenBraceOffset >= 0) {
-//            // while additional lines do not have xml tags
+//        final BraceCounter braceCounter = new BraceCounter();
+//        braceCounter.addOpenBrace();
+
+
+        //            // while additional lines do not have xml tags
 //            // while next line is not at end of file
 //            // track open braces and close braces
 //            // if #open == #close, try json parse
@@ -61,7 +65,7 @@ public class JSONExtractor {
         return line.indexOf('}', start);
     }
 
-    class BraceCounter {
+    static class BraceCounter {
         private int openBraces;
         private int closeBraces;
 
