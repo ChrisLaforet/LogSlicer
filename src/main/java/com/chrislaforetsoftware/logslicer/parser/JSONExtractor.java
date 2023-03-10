@@ -60,4 +60,20 @@ public class JSONExtractor {
     private static int findNextClosingBraceAfter(String line, int start) {
         return line.indexOf('}', start);
     }
+
+    class BraceCounter {
+        private int openBraces;
+        private int closeBraces;
+
+        public boolean areBracesMatched() {
+            return openBraces == closeBraces;
+        }
+        public void addOpenBrace() {
+            ++openBraces;
+        }
+
+        public void addCloseBrace() {
+            ++closeBraces;
+        }
+    }
 }
