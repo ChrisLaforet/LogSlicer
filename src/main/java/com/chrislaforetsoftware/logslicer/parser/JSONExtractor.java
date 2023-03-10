@@ -4,9 +4,9 @@ import com.chrislaforetsoftware.logslicer.log.LogContent;
 
 public class JSONExtractor {
     public static IMarkupContent testAndExtractFrom(LogContent content, int lineNumber) {
-System.err.println(lineNumber + " - " + content.getTextFor(lineNumber));
         final String line = content.getTextFor(lineNumber);
         int openBraceOffset = findOpenBraceAfter(line, 0);
+        int firstOpenBraceOffset = openBraceOffset;
         while (openBraceOffset >= 0) {
             int closeBraceOffset = findNextClosingBraceAfter(line, openBraceOffset);
             while (closeBraceOffset >= 0) {
@@ -19,6 +19,13 @@ System.err.println(lineNumber + " - " + content.getTextFor(lineNumber));
             }
             openBraceOffset = findOpenBraceAfter(line, openBraceOffset + 1);
         }
+
+        if (firstOpenBraceOffset >= 0) {
+            // while additional lines do not have xml tags and not at end of file
+            // track open braces and close braces
+            // if #open == #close, try json parse
+        }
+
         return null;
     }
 
@@ -29,4 +36,6 @@ System.err.println(lineNumber + " - " + content.getTextFor(lineNumber));
     private static int findNextClosingBraceAfter(String line, int start) {
         return line.indexOf('}', start);
     }
+
+
 }

@@ -1,7 +1,6 @@
 package com.chrislaforetsoftware.logslicer.parser;
 
 import com.chrislaforetsoftware.logslicer.log.LogContent;
-import org.json.XML;
 
 import java.util.ArrayList;
 import java.util.List;
