@@ -7,6 +7,7 @@ public class JSONExtractor {
         final String line = content.getTextFor(lineNumber);
         int openBraceOffset = findOpenBraceAfter(line, 0);
         int firstOpenBraceOffset = openBraceOffset;
+
         while (openBraceOffset >= 0) {
             int closeBraceOffset = findNextClosingBraceAfter(line, openBraceOffset);
             while (closeBraceOffset >= 0) {
@@ -20,11 +21,34 @@ public class JSONExtractor {
             openBraceOffset = findOpenBraceAfter(line, openBraceOffset + 1);
         }
 
-        if (firstOpenBraceOffset >= 0) {
-            // while additional lines do not have xml tags and not at end of file
-            // track open braces and close braces
-            // if #open == #close, try json parse
-        }
+//        if (firstOpenBraceOffset >= 0) {
+//            // while additional lines do not have xml tags
+//            // while next line is not at end of file
+//            // track open braces and close braces
+//            // if #open == #close, try json parse
+//
+//            int openBraceCount = 0;
+//            int closeBraceCount = 0;
+//
+//            int endLineNumber = lineNumber + 1;
+//
+//            while (endLineNumber < content.lineCount()) {
+//                final String currentLine = content.getTextFor(lineNumber);
+//                int openBraceOffset = findOpenBraceAfter(line, 0);
+//
+//                final var endTag = content.getXmlEndTagsFor(endLineNumber).stream()
+//                        .filter(tag -> tag.getTag().equals(currentTag.getTag()))
+//                        .findFirst();
+//                if (endTag.isPresent()) {
+//                    return new XMLMarkupContent(content.getTextInRange(currentTag.getLineNumber(),
+//                                                                       currentTag.getStart(),
+//                                                                       endLineNumber,
+//                                                                       endTag.get().getEnd() + 1), currentTag.getLineNumber(), endLineNumber);
+//                }
+//
+//                ++endLineNumber;
+//            }
+//        }
 
         return null;
     }
@@ -36,6 +60,4 @@ public class JSONExtractor {
     private static int findNextClosingBraceAfter(String line, int start) {
         return line.indexOf('}', start);
     }
-
-
 }
