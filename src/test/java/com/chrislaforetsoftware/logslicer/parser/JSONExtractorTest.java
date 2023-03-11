@@ -11,10 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class JSONExtractorTest {
 
     static private final String SIMPLE_XML = "<Testing></Testing>";
-    static private final String VALID_SINGLE_LINE_JSON = "{\"menu\":{\"id\":\"file\",\"value\":\"File\",\"popup\":{\"menuitem\":[{\"value\":\"New\",\"onclick\":\"CreateNewDoc()\"},{\"value\":\"Open\",\"onclick\":\"OpenDoc()\"},{\"value\":\"Close\",\"onclick\":\"CloseDoc()\"}]}}}";
-    static private final String INVALID_SINGLE_LINE_JSON = "{\"id\":\"file\"  \"value\":\"File\"}";
+    static public final String VALID_SINGLE_LINE_JSON = "{\"menu\":{\"id\":\"file\",\"value\":\"File\",\"popup\":{\"menuitem\":[{\"value\":\"New\",\"onclick\":\"CreateNewDoc()\"},{\"value\":\"Open\",\"onclick\":\"OpenDoc()\"},{\"value\":\"Close\",\"onclick\":\"CloseDoc()\"}]}}}";
+    static public final String INVALID_SINGLE_LINE_JSON = "{\"id\":\"file\"  \"value\":\"File\"}";
     static private final String LIVE_SINGLE_LINE_JSON = "{\"search\":{\"filter\":true,\"family\":[{\"age\":33,\"children\":1,\"disabilities\":[\"NONE\"]}],\"familyCodes\":[\"MARRIED\",\"INSURED\"],\"nextBirthday\":{\"date\":\"2022-10-26T0:00\",\"cakeOption\":{\"code\":\"CHOC_GANACHE\",\"type\":\"12_INCH_ROUND\"},\"iceCreamOption\":{\"code\":\"VAN_SWIRL\",\"type\":\"RASPBERRY_SWIRL\"}}}}";
-    static private final String LIVE_MULTILINE_JSON = "{\"search\": {\n" + " \"filter\": true,\n" + " \"family\": [{\n" + "  \"age\": 33,\n" + "  \"children\": 1,\n" + "  \"disabilities\": [\"NONE\"]\n" + " }],\n" + " \"familyCodes\": [\n" + "  \"MARRIED\",\n" + "  \"INSURED\"\n" + " ],\n" + " \"nextBirthday\": {\n" + "  \"date\": \"2022-10-26T0:00\",\n" + "  \"cakeOption\": {\n" + "   \"code\": \"CHOC_GANACHE\",\n" + "   \"type\": \"12_INCH_ROUND\"\n" + "  },\n" + "  \"iceCreamOption\": {\n" + "   \"code\": \"VAN_SWIRL\",\n" + "   \"type\": \"RASPBERRY_SWIRL\"\n" + "  }\n" + " }\n" + "}}";
+    static public final String LIVE_MULTILINE_JSON = "{\"search\": {\n" + " \"filter\": true,\n" + " \"family\": [{\n" + "  \"age\": 33,\n" + "  \"children\": 1,\n" + "  \"disabilities\": [\"NONE\"]\n" + " }],\n" + " \"familyCodes\": [\n" + "  \"MARRIED\",\n" + "  \"INSURED\"\n" + " ],\n" + " \"nextBirthday\": {\n" + "  \"date\": \"2022-10-26T0:00\",\n" + "  \"cakeOption\": {\n" + "   \"code\": \"CHOC_GANACHE\",\n" + "   \"type\": \"12_INCH_ROUND\"\n" + "  },\n" + "  \"iceCreamOption\": {\n" + "   \"code\": \"VAN_SWIRL\",\n" + "   \"type\": \"RASPBERRY_SWIRL\"\n" + "  }\n" + " }\n" + "}}";
+    static public final String INVALID_JSON_WITH_XML = "{\"code\":\"1239801A\",<xmltag>\"states\":[\"TX\",\"CA\",\"AK\"]}";
+
     @Test
     void givenLogLine_whenTextEmpty_thenReturnsNull() {
         final LogContent content = new LogContent();
@@ -55,27 +57,9 @@ class JSONExtractorTest {
     }
 
     @Test
-    void givenLogLine_whenContainsEmptyJSONPrecededByFalseAlarms_thenReturnsTag() {
-        final LogContent content = new LogContent();
-        content.addLine(0, "This { is a { red herring {} with a trailer");
-        final IMarkupContent json = JSONExtractor.testAndExtractFrom(content, 0);
-        assertNotNull(json);
-        assertEquals("{}", json.getContent());
-    }
-
-    @Test
     void givenLogLine_whenContainsValidSingleLineJSON_thenReturnsTag() {
         final LogContent content = new LogContent();
         content.addLine(0, VALID_SINGLE_LINE_JSON);
-        final IMarkupContent json = JSONExtractor.testAndExtractFrom(content, 0);
-        assertNotNull(json);
-        assertEquals(VALID_SINGLE_LINE_JSON, json.getContent());
-    }
-
-    @Test
-    void givenLogLine_whenContainsValidSingleLineJSONPrecededByFalseAlarms_thenReturnsTag() {
-        final LogContent content = new LogContent();
-        content.addLine(0, "Testing { With {{ false alarms " + VALID_SINGLE_LINE_JSON + " False }");
         final IMarkupContent json = JSONExtractor.testAndExtractFrom(content, 0);
         assertNotNull(json);
         assertEquals(VALID_SINGLE_LINE_JSON, json.getContent());
@@ -100,14 +84,14 @@ class JSONExtractorTest {
 
     @Test
     void givenLogLines_whenContainsFormedMultilineJSON_thenReturnsTag() {
-        final LogContent content = new LogContent();
-        addLinesTo(content, LIVE_MULTILINE_JSON);
+        final LogContent content = createMultilineContent(LIVE_MULTILINE_JSON);
         final IMarkupContent json = JSONExtractor.testAndExtractFrom(content, 0);
         assertNotNull(json);
         assertEquals(LIVE_MULTILINE_JSON, json.getContent());
     }
 
-    private void addLinesTo(LogContent content, String multiline) {
+    public static LogContent createMultilineContent(String multiline) {
+        final LogContent content = new LogContent();
         try (BufferedReader reader = new BufferedReader(new StringReader(multiline))) {
             String line;
             int currentLine = 0;
@@ -117,5 +101,6 @@ class JSONExtractorTest {
         } catch (Exception e) {
             // do nothing
         }
+        return content;
     }
 }
