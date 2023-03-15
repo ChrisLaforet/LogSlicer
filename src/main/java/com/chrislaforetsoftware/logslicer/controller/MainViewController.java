@@ -28,6 +28,7 @@ import org.fxmisc.richtext.LineNumberFactory;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.function.IntFunction;
@@ -132,6 +133,11 @@ public class MainViewController {
             Platform.runLater(() -> {
                 codeArea.moveTo(index.line(), index.column());
                 codeArea.requestFollowCaret();
+                //codeArea.setStyleClass(index.column(), index.column() + index.length(), "-rtfx-background-color: red;");
+//                codeArea.setStyle(0,
+//                                index.column(),
+//                            index.column() + index.length(),
+//                                Collections.singleton("-rtfx-background-color: yellow;"));
             });
         });
     }

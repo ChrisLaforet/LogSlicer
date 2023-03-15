@@ -28,7 +28,7 @@ public class TextSearch {
                 if (offset < 0) {
                     break;
                 }
-                locations.add(new Location(currentLine, offset));
+                locations.add(new Location(currentLine, offset, searchString.length()));
                 column = offset + 1;
             }
         }
