@@ -35,6 +35,11 @@
                           <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                       </accelerator>
                   </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Find previous" onAction="#handleSearchPrevious">
+                      <accelerator>
+                          <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                      </accelerator>
+                  </MenuItem>
                   <MenuItem mnemonicParsing="false" text="Go to line..." onAction="#handleGoToLine">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="G" control="DOWN" meta="UP" shift="UP" shortcut="UP" />

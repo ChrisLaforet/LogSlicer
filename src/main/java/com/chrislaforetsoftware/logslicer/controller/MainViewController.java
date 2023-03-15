@@ -10,6 +10,8 @@ import com.chrislaforetsoftware.logslicer.parser.JSONContent;
 import com.chrislaforetsoftware.logslicer.parser.JSONExtractor;
 import com.chrislaforetsoftware.logslicer.parser.XMLExtractor;
 import com.chrislaforetsoftware.logslicer.parser.XMLMarkupContent;
+import com.chrislaforetsoftware.logslicer.search.Location;
+import com.chrislaforetsoftware.logslicer.search.TextSearch;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -51,9 +53,9 @@ public class MainViewController {
 
     private CodeArea codeArea;
 
-    private String searchFor;
-    private int searchLastLine;
-    private int searchLastColumn;
+    private Optional<TextSearch> search = Optional.empty();
+
+    private Optional<Location> lastIndex;
 
     public LogContent getLogContent() {
         return this.logContent;
@@ -101,20 +103,37 @@ public class MainViewController {
 
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(searchString -> {
-            searchFor = searchString;
-            searchLastColumn = -1;
-            searchLastLine = -1;
-
-//            System.out.println("Your search string: " + searchString)
+            search = Optional.of(new TextSearch(logContent, searchString, true));
+            lastIndex = search.get().getFirstMatch();
+            jumpToMatch();
         });
     }
 
     public void handleSearchNext(ActionEvent actionEvent) {
-        if (searchFor == null || searchFor.isEmpty()) {
+        if (search.isEmpty() || lastIndex.isEmpty()) {
             handleSearch(actionEvent);
         } else {
-            // flesh in this logic
+            lastIndex = search.get().getNextMatchTo(lastIndex.get());
+            jumpToMatch();
         }
+    }
+
+    public void handleSearchPrevious(ActionEvent actionEvent) {
+        if (search.isEmpty() || lastIndex.isEmpty()) {
+            handleSearch(actionEvent);
+        } else {
+            lastIndex = search.get().getPreviousMatchTo(lastIndex.get());
+            jumpToMatch();
+        }
+    }
+
+    private void jumpToMatch() {
+        lastIndex.ifPresent(index -> {
+            Platform.runLater(() -> {
+                codeArea.moveTo(index.line(), index.column());
+                codeArea.requestFollowCaret();
+            });
+        });
     }
 
     public void handleOpenLog(ActionEvent actionEvent) {

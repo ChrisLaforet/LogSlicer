@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class TextSearch {
 
-    private String searchString;
+    private final String searchString;
     private final List<Location> locations = new ArrayList<>();
 
     public TextSearch(LogContent content, String searchString, boolean caseInsensitive) {
@@ -34,6 +34,10 @@ public class TextSearch {
         }
     }
 
+    public String getSearchString() {
+        return searchString;
+    }
+
     public int matchCount() {
         return locations.size();
     }
@@ -46,10 +50,33 @@ public class TextSearch {
     }
 
     public Optional<Location> getPreviousMatchTo(Location index) {
-return Optional.empty();
+        for (int offset = locations.size() - 1; offset >= 0; offset--) {
+            final Location location = locations.get(offset);
+            if (location.line() > index.line()) {
+                continue;
+            }
+            if ((location.line() == index.line() &&
+                    location.column() < index.column()) ||
+                    (location.line() < index.line())) {
+                return Optional.of(location);
+            }
+        }
+
+        return Optional.empty();
     }
 
-    public Optional<Location> getNextMatcTo(Location index) {
-return Optional.empty();
+    public Optional<Location> getNextMatchTo(Location index) {
+        for (var location : locations) {
+            if (location.line() < index.line()) {
+                continue;
+            }
+            if ((location.line() == index.line() &&
+                    location.column() > index.column()) ||
+                    (location.line() > index.line())) {
+                return Optional.of(location);
+            }
+        }
+
+    return Optional.empty();
     }
 }

@@ -61,4 +61,31 @@ class TextSearchTest {
         final TextSearch search = new TextSearch(content, SEARCH_STRING, false);
         assertEquals(2, search.matchCount());
     }
+
+    @Test
+    void givenContentToSearchWithTwoMatches_whenRequestingSecondMatch_thenReturnsMatch() {
+        final LogContent content = new LogContent();
+        content.addLine(0, SINGLE_TEST_LINE);
+        content.addLine(1, "Another " + SINGLE_TEST_LINE);
+        final TextSearch search = new TextSearch(content, SEARCH_STRING, false);
+        final Optional<Location> first = search.getFirstMatch();
+        final Optional<Location> second = search.getNextMatchTo(first.get());
+        assertEquals(1, second.get().line());
+        assertEquals(18, second.get().column());
+    }
+
+    @Test
+    void givenContentToSearchWithTwoMatches_whenRequestingPreviousMatchToSecond_thenReturnsMatch() {
+        final LogContent content = new LogContent();
+        content.addLine(0, SINGLE_TEST_LINE);
+        content.addLine(1, "Another " + SINGLE_TEST_LINE);
+        final TextSearch search = new TextSearch(content, SEARCH_STRING, false);
+        final Optional<Location> first = search.getFirstMatch();
+        final Optional<Location> second = search.getNextMatchTo(first.get());
+
+        final Optional<Location> previous = search.getPreviousMatchTo(second.get());
+
+        assertEquals(0, previous.get().line());
+        assertEquals(10, previous.get().column());
+    }
 }
