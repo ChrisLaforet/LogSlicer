@@ -24,6 +24,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.InlineCssTextArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
 import java.io.*;
@@ -52,7 +53,8 @@ public class MainViewController {
 
     private VirtualizedScrollPane virtualizedScrollPane;
 
-    private CodeArea codeArea;
+    //private CodeArea codeArea;
+    private InlineCssTextArea codeArea;
 
     private Optional<TextSearch> search = Optional.empty();
 
@@ -64,7 +66,8 @@ public class MainViewController {
 
     @FXML
     public void initialize() {
-        codeArea = new CodeArea();
+        codeArea = new InlineCssTextArea();
+        //codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
         codeArea.clear();
         codeArea.setEditable(false);
@@ -83,6 +86,10 @@ public class MainViewController {
             return hbox;
         };
         codeArea.setParagraphGraphicFactory(graphicFactory);
+
+// TODO: CML - set monospaced font
+//codeArea.setParagraphStyle(0, );
+// see https://github.com/FXMisc/RichTextFX/wiki/RichTextFX-CSS-Reference-Guide
 
         // codeArea.setContextMenu( new DefaultContextMenu() );
 
@@ -133,6 +140,8 @@ public class MainViewController {
             Platform.runLater(() -> {
                 codeArea.moveTo(index.line(), index.column());
                 codeArea.requestFollowCaret();
+
+                codeArea.setStyle(0, 0, 10,"-rtfx-background-color: red;");
                 //codeArea.setStyleClass(index.column(), index.column() + index.length(), "-rtfx-background-color: red;");
 //                codeArea.setStyle(0,
 //                                index.column(),
