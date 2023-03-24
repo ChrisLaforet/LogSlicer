@@ -58,7 +58,7 @@ public class MainViewController {
 
     private Optional<TextSearch> search = Optional.empty();
 
-    private Optional<Location> lastIndex;
+    private Optional<Location> lastIndex = Optional.empty();
 
     public LogContent getLogContent() {
         return this.logContent;
@@ -112,8 +112,9 @@ public class MainViewController {
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(searchString -> {
             search = Optional.of(new TextSearch(logContent, searchString, true));
+            var toUnmark = lastIndex;
             lastIndex = search.get().getFirstMatch();
-            jumpToMatch();
+            jumpToMatch(toUnmark);
         });
     }
 
@@ -121,8 +122,9 @@ public class MainViewController {
         if (search.isEmpty() || lastIndex.isEmpty()) {
             handleSearch(actionEvent);
         } else {
+            var toUnmark = lastIndex;
             lastIndex = search.get().getNextMatchTo(lastIndex.get());
-            jumpToMatch();
+            jumpToMatch(toUnmark);
         }
     }
 
@@ -130,18 +132,29 @@ public class MainViewController {
         if (search.isEmpty() || lastIndex.isEmpty()) {
             handleSearch(actionEvent);
         } else {
+            var toUnmark = lastIndex;
             lastIndex = search.get().getPreviousMatchTo(lastIndex.get());
-            jumpToMatch();
+            jumpToMatch(toUnmark);
         }
     }
 
-    private void jumpToMatch() {
+    private void jumpToMatch(Optional<Location> toUnmark) {
+        if (lastIndex.isEmpty()) {
+            Platform.runLater(() -> {
+                toUnmark.ifPresent(location ->
+                        codeArea.setStyle(location.line(), location.column(), location.column() + location.length(), "-rtfx-background-color: white;"));
+            });
+            return;
+        }
         lastIndex.ifPresent(index -> {
             Platform.runLater(() -> {
+                toUnmark.ifPresent(location ->
+                        codeArea.setStyle(location.line(), location.column(), location.column() + location.length(), "-rtfx-background-color: white;"));
+
                 codeArea.moveTo(index.line(), index.column());
                 codeArea.requestFollowCaret();
 
-                codeArea.setStyle(0, 0, 10,"-rtfx-background-color: red;");
+                codeArea.setStyle(index.line(), index.column(), index.column() + index.length(),"-rtfx-background-color: yellow;");
                 //codeArea.setStyleClass(index.column(), index.column() + index.length(), "-rtfx-background-color: red;");
 //                codeArea.setStyle(0,
 //                                index.column(),
@@ -252,6 +265,10 @@ public class MainViewController {
                 progressStatus.progressProperty().unbind();
 
                 Platform.runLater(() -> {
+                    for (var paragraph = 0; paragraph < logContent.lineCount(); paragraph++) {
+                        codeArea.setParagraphStyle(paragraph, "-fx-font: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace; -fx-font-size: 12px; -fx-text-fill: black");
+                    }
+                    //                   codeArea.setStyle(0, logContent.getText().length(), "-fx-font: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace; -fx-font-size: 50px; -fx-text-fill: black");
                     codeArea.moveTo(0);
                     codeArea.requestFollowCaret();
                 });
@@ -300,11 +317,14 @@ public class MainViewController {
                 statusMessage.setText("Loaded " + file.getName());
                 codeArea.clear();
                 codeArea.replaceText(0, 0, logContent.getText());
-                totalLines.setText(logContent.lineCount() + " lines");
 
                 progressStatus.progressProperty().unbind();
 
                 Platform.runLater(() -> {
+                    for (var paragraph = 0; paragraph < logContent.lineCount(); paragraph++) {
+                        codeArea.setParagraphStyle(paragraph, "-fx-font: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace; -fx-font-size: 12px; -fx-text-fill: black");
+                    }
+                    //codeArea.setStyle(0, logContent.getText().length(), "-fx-font-family:Courier;-fx-font-size: 12px; -fx-text-fill: black");
                     codeArea.moveTo(0);
                     codeArea.requestFollowCaret();
                 });
