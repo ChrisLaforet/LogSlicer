@@ -266,7 +266,7 @@ public class MainViewController {
 
                 Platform.runLater(() -> {
                     for (var paragraph = 0; paragraph < logContent.lineCount(); paragraph++) {
-                        codeArea.setParagraphStyle(paragraph, "-fx-font: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace; -fx-font-size: 12px; -fx-text-fill: black");
+                        codeArea.setParagraphStyle(paragraph, "-fx-font-family: \"Consolas\", \"Lucida Console\", \"Courier\", \"monospace\"; -fx-font-size: 12px; -fx-text-fill: black");
                     }
                     //                   codeArea.setStyle(0, logContent.getText().length(), "-fx-font: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace; -fx-font-size: 50px; -fx-text-fill: black");
                     codeArea.moveTo(0);
@@ -322,7 +322,7 @@ public class MainViewController {
 
                 Platform.runLater(() -> {
                     for (var paragraph = 0; paragraph < logContent.lineCount(); paragraph++) {
-                        codeArea.setParagraphStyle(paragraph, "-fx-font: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace; -fx-font-size: 12px; -fx-text-fill: black");
+                        codeArea.setParagraphStyle(paragraph, "-fx-font-family: \"Consolas\", \"Lucida Console\", \"Courier\", \"monospace\"; -fx-font-size: 12px; -fx-text-fill: black");
                     }
                     //codeArea.setStyle(0, logContent.getText().length(), "-fx-font-family:Courier;-fx-font-size: 12px; -fx-text-fill: black");
                     codeArea.moveTo(0);
