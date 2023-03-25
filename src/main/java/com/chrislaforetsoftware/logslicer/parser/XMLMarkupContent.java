@@ -12,8 +12,15 @@ public class XMLMarkupContent implements IMarkupContent {
         this.endLine = endLine;
     }
 
+    @Override
     public String getMarkupType() {
         return "XML";
+    }
+
+    @Override
+    public String getRootTag() {
+        // TODO: CML - find first tag after soap body or first tag
+        return "<ROOT>";
     }
 
     public String getContent() {

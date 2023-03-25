@@ -5,10 +5,8 @@ import com.chrislaforetsoftware.logslicer.parser.IMarkupContent;
 import com.chrislaforetsoftware.logslicer.parser.JSONContent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 
@@ -19,7 +17,20 @@ import java.util.List;
 public class MarkupIndexDialog extends Dialog<String> {
 
     @FXML
-    private TableView table;
+    private TableView<IMarkupContent> markupTable;
+
+    @FXML
+    private TableColumn<IMarkupContent, String> markupType;
+
+    @FXML
+    private TableColumn<IMarkupContent, Integer> startLine;
+
+    @FXML
+    private TableColumn<IMarkupContent, Integer> endLine;
+
+    @FXML
+    private TableColumn<IMarkupContent, String> rootTag;
+
     private LogContent content;
 
     public MarkupIndexDialog(Window owner, LogContent content) {
@@ -41,6 +52,11 @@ public class MarkupIndexDialog extends Dialog<String> {
             setResizable(true);
             setTitle("List markup tags in log");
             setDialogPane(dialogPane);
+
+            markupType.setCellValueFactory(new PropertyValueFactory<IMarkupContent, String>("markupType"));
+            startLine.setCellValueFactory(new PropertyValueFactory<IMarkupContent, Integer>("startLine"));
+            endLine.setCellValueFactory(new PropertyValueFactory<IMarkupContent, Integer>("endLine"));
+            rootTag.setCellValueFactory(new PropertyValueFactory<IMarkupContent, String>("rootTag"));
 
             showTags();
            // setOnShowing(dialogEvent -> Platform.runLater(() -> contentText.requestFocus()));
@@ -68,7 +84,7 @@ public class MarkupIndexDialog extends Dialog<String> {
         }
 
         markups.forEach(tag ->
-            table.getItems().add(tag));
+                markupTable.getItems().add(tag));
     }
 
     @FXML
