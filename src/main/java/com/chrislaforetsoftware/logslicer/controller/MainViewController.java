@@ -16,12 +16,16 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.InlineCssTextArea;
@@ -59,6 +63,8 @@ public class MainViewController {
     private Optional<TextSearch> search = Optional.empty();
 
     private Optional<Location> lastIndex = Optional.empty();
+
+    private Parent listMarkup;
 
     public LogContent getLogContent() {
         return this.logContent;
@@ -105,8 +111,8 @@ public class MainViewController {
         }
 
         final TextInputDialog dialog = new TextInputDialog("");
-        dialog.setTitle("Find text");
-        dialog.setHeaderText("Search for text within this log file");
+        dialog.setTitle("Find text within log");
+        dialog.setHeaderText(null);
         dialog.setContentText("Search for:");
 
         Optional<String> result = dialog.showAndWait();
@@ -162,6 +168,15 @@ public class MainViewController {
 //                                Collections.singleton("-rtfx-background-color: yellow;"));
             });
         });
+    }
+
+    public void handleListTags(ActionEvent actionEvent) {
+        if (logContent == null || listMarkup != null) {
+            return;
+        }
+
+        final MarkupIndexDialog dialog = new MarkupIndexDialog(LogSlicer.getStage());
+        dialog.show();
     }
 
     public void handleOpenLog(ActionEvent actionEvent) {
@@ -289,7 +304,7 @@ public class MainViewController {
 
             final Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText("Error parsing");
+            alert.setHeaderText(null);
             alert.setContentText("A problem occurred while parsing pasted log file text");
             alert.showAndWait();
         });
@@ -345,7 +360,7 @@ public class MainViewController {
 
             final Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText("Error loading file " + file.getName());
+            alert.setHeaderText(null);
             alert.setContentText("A problem occurred while loading file " + file.getName() +
                     "\r\nPath to file:" + file.getAbsolutePath());
             alert.showAndWait();

@@ -25,27 +25,36 @@
                 </Menu>
             <Menu mnemonicParsing="false" text="Search">
               <items>
-                <MenuItem mnemonicParsing="false" text="Find..." onAction="#handleSearch">
+                <MenuItem mnemonicParsing="false" onAction="#handleSearch" text="Find...">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" text="Find next" onAction="#handleSearchNext">
+                  <MenuItem mnemonicParsing="false" onAction="#handleSearchNext" text="Find next">
                       <accelerator>
                           <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                       </accelerator>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" text="Find previous" onAction="#handleSearchPrevious">
+                  <MenuItem mnemonicParsing="false" onAction="#handleSearchPrevious" text="Find previous">
                       <accelerator>
                           <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                       </accelerator>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" text="Go to line..." onAction="#handleGoToLine">
+                  <MenuItem mnemonicParsing="false" onAction="#handleGoToLine" text="Go to line...">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="G" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Tags">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#handleListTags" text="List tags...">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="T" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+               </items>
             </Menu>
             </menus>
         </MenuBar>
