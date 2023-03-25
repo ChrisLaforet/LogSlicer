@@ -10,6 +10,7 @@ import com.chrislaforetsoftware.logslicer.parser.JSONContent;
 import com.chrislaforetsoftware.logslicer.parser.JSONExtractor;
 import com.chrislaforetsoftware.logslicer.parser.XMLExtractor;
 import com.chrislaforetsoftware.logslicer.parser.XMLMarkupContent;
+import com.chrislaforetsoftware.logslicer.request.IMoveTo;
 import com.chrislaforetsoftware.logslicer.search.Location;
 import com.chrislaforetsoftware.logslicer.search.TextSearch;
 import javafx.application.Platform;
@@ -39,7 +40,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
-public class MainViewController {
+public class MainViewController implements IMoveTo {
 
     @FXML
     private StackPane anchorPane;
@@ -157,8 +158,7 @@ public class MainViewController {
                 toUnmark.ifPresent(location ->
                         codeArea.setStyle(location.line(), location.column(), location.column() + location.length(), "-rtfx-background-color: white;"));
 
-                codeArea.moveTo(index.line(), index.column());
-                codeArea.requestFollowCaret();
+                moveToLocation(index.line(), index.column());
 
                 codeArea.setStyle(index.line(), index.column(), index.column() + index.length(),"-rtfx-background-color: yellow;");
                 //codeArea.setStyleClass(index.column(), index.column() + index.length(), "-rtfx-background-color: red;");
@@ -175,7 +175,7 @@ public class MainViewController {
             return;
         }
 
-        listMarkup = new MarkupIndexDialog(LogSlicer.getStage(), logContent);
+        listMarkup = new MarkupIndexDialog(LogSlicer.getStage(), logContent, this);
         listMarkup.show();
     }
 
@@ -232,14 +232,18 @@ public class MainViewController {
                 if (lineNumber > 0 && lineNumber <= logContent.lineCount()) {
 
                     Platform.runLater(() -> {
-                        codeArea.moveTo(lineNumber - 1, 0);
-                        codeArea.requestFollowCaret();
+                        moveToLocation(lineNumber - 1, 0);
                     });
                 }
             } catch (Exception e) {
                 // handles error on parsing
             }
         });
+    }
+
+    private void moveToLocation(int line, int column) {
+        codeArea.moveTo(line, column);
+        codeArea.requestFollowCaret();
     }
 
     public void handleXmlButton(ActionEvent actionEvent, int lineNumber) {
@@ -294,9 +298,7 @@ public class MainViewController {
                     for (var paragraph = 0; paragraph < logContent.lineCount(); paragraph++) {
                         codeArea.setParagraphStyle(paragraph, "-fx-font-family: \"monospace\"; -fx-font-size: 12px; -fx-text-fill: black; -fx-font-weight: 600;");
                     }
-                    //                   codeArea.setStyle(0, logContent.getText().length(), "-fx-font: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace; -fx-font-size: 50px; -fx-text-fill: black");
-                    codeArea.moveTo(0);
-                    codeArea.requestFollowCaret();
+                    moveToLocation(0, 0);
                 });
             } catch (InterruptedException | ExecutionException e) {
                 codeArea.clear();
@@ -350,9 +352,7 @@ public class MainViewController {
                     for (var paragraph = 0; paragraph < logContent.lineCount(); paragraph++) {
                         codeArea.setParagraphStyle(paragraph, "-fx-font-family: \"monospace\"; -fx-font-size: 12px; -fx-text-fill: black; -fx-font-weight: 600;");
                     }
-                    //codeArea.setStyle(0, logContent.getText().length(), "-fx-font-family:Courier;-fx-font-size: 12px; -fx-text-fill: black");
-                    codeArea.moveTo(0);
-                    codeArea.requestFollowCaret();
+                    moveToLocation(0,0);
                 });
             } catch (InterruptedException | ExecutionException e) {
                 codeArea.clear();
@@ -419,5 +419,12 @@ public class MainViewController {
     public void handleClose(ActionEvent actionEvent) {
         checkAndCloseOpenDialogs();
         Platform.exit();
+    }
+
+    @Override
+    public void moveTo(int line, int column) {
+        Platform.runLater(() -> {
+            moveToLocation(line, column);
+        });
     }
 }

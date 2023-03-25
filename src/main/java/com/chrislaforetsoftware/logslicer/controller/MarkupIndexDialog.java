@@ -3,6 +3,7 @@ package com.chrislaforetsoftware.logslicer.controller;
 import com.chrislaforetsoftware.logslicer.log.LogContent;
 import com.chrislaforetsoftware.logslicer.parser.IMarkupContent;
 import com.chrislaforetsoftware.logslicer.parser.JSONContent;
+import com.chrislaforetsoftware.logslicer.request.IMoveTo;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -33,8 +34,11 @@ public class MarkupIndexDialog extends Dialog<String> {
 
     private LogContent content;
 
-    public MarkupIndexDialog(Window owner, LogContent content) {
+    private IMoveTo viewMover;
+
+    public MarkupIndexDialog(Window owner, LogContent content, IMoveTo viewMover) {
         this.content = content;
+        this.viewMover = viewMover;
         show(owner);
     }
 
@@ -54,6 +58,12 @@ public class MarkupIndexDialog extends Dialog<String> {
             setDialogPane(dialogPane);
 
             showTags();
+
+            markupTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    this.viewMover.moveTo(newSelection.getStartLine(), 0);
+                }
+            });
         }
         catch (IOException e) {
             final Alert alert = new Alert(Alert.AlertType.ERROR);
