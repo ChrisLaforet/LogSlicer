@@ -74,6 +74,8 @@ public class MarkupIndexDialog extends Dialog<String> {
                 continue;
             }
             markupTable.getItems().add(tag);
+            // see https://stackoverflow.com/questions/26424769/javafx8-how-to-create-listener-for-selection-of-row-in-tableview
+            // for click row to move our main window
             lineNumber = tag.getEndLine() + 1;
         }
     }
