@@ -6,24 +6,24 @@ public class XMLTag {
     public static final char END_BRACKET = '>';
     public static final String END_TAG_SLASH = "/";
 
-    private int lineNumber;
-    private int start;
-    private int end;
-    private String tag;
+    private final int lineNumber;
+    private final int start;
+    private final int end;
+    private final String tag;
     private final String content;
     private boolean closed;
 
-    public XMLTag(int lineNumber, int start, int end, String content, boolean closed) {
+    public XMLTag(int lineNumber, int start, int end, String contentInsideBracket, boolean closed) {
         this.lineNumber = lineNumber;
         this.start = start;
         this.end = end;
-        this.content = content.trim();
+        this.content = contentInsideBracket.trim();
         this.tag = extractTagFromContent();
         this.closed = closed;
     }
 
-    public XMLTag(int lineNumber, int start, int end, String content) {
-        this(lineNumber, start, end, content, false);
+    public XMLTag(int lineNumber, int start, int end, String contentInsideBracket) {
+        this(lineNumber, start, end, contentInsideBracket, false);
     }
 
     private String extractTagFromContent() {
@@ -31,10 +31,13 @@ public class XMLTag {
         index = findWhitespaceBefore(index, '\t');
         index = findWhitespaceBefore(index, '\r');
         index = findWhitespaceBefore(index, '\n');
+        index = findWhitespaceBefore(index, '/');
+        index = findWhitespaceBefore(index, '>');
+
         if (index > 0) {
-            return content.substring(0, index);
+            return content.substring(0, index).trim();
         }
-        return content;
+        return content.trim();
     }
 
     private int findWhitespaceBefore(int lastIndex, char whitespace) {
@@ -44,7 +47,7 @@ public class XMLTag {
         } else if (lastIndex < 0) {
             return index;
         }
-        return lastIndex < index ? lastIndex : index;
+        return Math.min(lastIndex, index);
     }
 
     public void closeTag() {
@@ -64,8 +67,7 @@ public class XMLTag {
     }
 
     public String getMarkup() {
-// TODO: extract to support xml and json
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append(START_BRACKET);
         sb.append(content);
         if (closed) {

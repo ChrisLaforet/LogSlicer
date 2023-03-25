@@ -48,6 +48,15 @@ class XMLExtractorTest {
     }
 
     @Test
+    void givenLogLine_whenContainsSingleClosedTagWithLeadingSpace_thenReturnsTag() {
+        final LogContent content = new LogContent();
+        content.addLine(0, "< Testing />");
+        final IMarkupContent xml = XMLExtractor.testAndExtractFrom(content, 0);
+        assertNotNull(xml);
+        assertEquals("<Testing/>", xml.getContent());
+    }
+
+    @Test
     void givenLogLine_whenContainsWrappedSingleClosedTag_thenReturnsTag() {
         final LogContent content = new LogContent();
         content.addLine(0, "prefix<Testing /> suffix");
