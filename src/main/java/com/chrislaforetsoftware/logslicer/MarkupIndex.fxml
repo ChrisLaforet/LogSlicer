@@ -24,7 +24,7 @@
                   <TableColumn fx:id="markupType" prefWidth="50.0" text="Type" />
                   <TableColumn fx:id="startLine" prefWidth="75.0" text="Start line" />
                   <TableColumn fx:id="endLine" prefWidth="75.0" text="End line" />
-                  <TableColumn fx:id="rootTag" prefWidth="150.0" text="Root tag" />
+                  <TableColumn fx:id="rootTag" prefWidth="250.0" text="Root tag" />
                 </columns>
               </TableView>
            </children>

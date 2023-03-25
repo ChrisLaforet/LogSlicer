@@ -53,18 +53,12 @@ public class MarkupIndexDialog extends Dialog<String> {
             setTitle("List markup tags in log");
             setDialogPane(dialogPane);
 
-            markupType.setCellValueFactory(new PropertyValueFactory<IMarkupContent, String>("markupType"));
-            startLine.setCellValueFactory(new PropertyValueFactory<IMarkupContent, Integer>("startLine"));
-            endLine.setCellValueFactory(new PropertyValueFactory<IMarkupContent, Integer>("endLine"));
-            rootTag.setCellValueFactory(new PropertyValueFactory<IMarkupContent, String>("rootTag"));
-
             showTags();
-           // setOnShowing(dialogEvent -> Platform.runLater(() -> contentText.requestFocus()));
         }
         catch (IOException e) {
             final Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText("Error loading content dialog");
+            alert.setHeaderText("Error loading markup index dialog");
             alert.setContentText("A problem occurred while attempting to create a dialog (" + e.getMessage() + ")");
             alert.showAndWait();
             throw new RuntimeException(e);
@@ -72,23 +66,23 @@ public class MarkupIndexDialog extends Dialog<String> {
     }
 
     private void showTags() {
-        final List<IMarkupContent> markups = new ArrayList<>();
-        for (int lineNumber = 0; lineNumber < content.lineCount(); ) {
+        int lineNumber = 0;
+        while (lineNumber < content.lineCount()) {
             var tag = content.getTagContentFor(lineNumber);
             if (tag == null) {
                 lineNumber++;
                 continue;
             }
-            markups.add(tag);
+            markupTable.getItems().add(tag);
             lineNumber = tag.getEndLine() + 1;
         }
-
-        markups.forEach(tag ->
-                markupTable.getItems().add(tag));
     }
 
     @FXML
     private void initialize() {
-
+        markupType.setCellValueFactory(new PropertyValueFactory<>("markupType"));
+        startLine.setCellValueFactory(new PropertyValueFactory<>("startLine"));
+        endLine.setCellValueFactory(new PropertyValueFactory<>("endLine"));
+        rootTag.setCellValueFactory(new PropertyValueFactory<>("rootTag"));
     }
 }
