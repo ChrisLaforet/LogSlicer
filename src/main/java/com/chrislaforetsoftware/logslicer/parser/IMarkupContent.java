@@ -4,4 +4,5 @@ public interface IMarkupContent {
     String getContent();
     int getStartLine();
     int getEndLine();
+    String getMarkupType();
 }

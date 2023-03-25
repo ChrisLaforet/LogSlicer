@@ -21,10 +21,10 @@
            <children>
               <TableView prefHeight="255.0" prefWidth="464.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0">
                 <columns>
-                  <TableColumn prefWidth="75.0" text="Type" />
+                  <TableColumn prefWidth="50.0" text="Type" />
                   <TableColumn prefWidth="75.0" text="Start line" />
-                    <TableColumn prefWidth="75.0" text="End line" />
-                    <TableColumn prefWidth="75.0" text="Root tag" />
+                  <TableColumn prefWidth="75.0" text="End line" />
+                  <TableColumn prefWidth="150.0" text="Root tag" />
                 </columns>
               </TableView>
            </children>

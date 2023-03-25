@@ -1,5 +1,6 @@
 package com.chrislaforetsoftware.logslicer.log;
 
+import com.chrislaforetsoftware.logslicer.parser.IMarkupContent;
 import com.chrislaforetsoftware.logslicer.parser.JSONContent;
 import com.chrislaforetsoftware.logslicer.parser.XMLMarkupContent;
 import com.chrislaforetsoftware.logslicer.parser.XMLTag;
@@ -158,6 +159,18 @@ public class LogContent {
         Optional<LogLine> match = getLogLineFor(lineNumber);
         if (match.isPresent()) {
             return match.get().getJsonContent();
+        }
+        return null;
+    }
+
+    public IMarkupContent getTagContentFor(int lineNumber) {
+        Optional<LogLine> match = getLogLineFor(lineNumber);
+        if (match.isPresent()) {
+            if (match.get().hasXml()) {
+                return match.get().getXmlContent();
+            } else if (match.get().hasJson()) {
+                return match.get().getJsonContent();
+            }
         }
         return null;
     }

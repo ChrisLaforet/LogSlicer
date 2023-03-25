@@ -12,6 +12,10 @@ public class JSONContent implements IMarkupContent {
         this.endLine = endLine;
     }
 
+    public String getMarkupType() {
+        return "JSON";
+    }
+
     @Override
     public String getContent() {
         return content;

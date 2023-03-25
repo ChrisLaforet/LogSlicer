@@ -1,19 +1,29 @@
 package com.chrislaforetsoftware.logslicer.controller;
 
+import com.chrislaforetsoftware.logslicer.log.LogContent;
+import com.chrislaforetsoftware.logslicer.parser.IMarkupContent;
 import com.chrislaforetsoftware.logslicer.parser.JSONContent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MarkupIndexDialog extends Dialog<String> {
 
-    public MarkupIndexDialog(Window owner) {
+    @FXML
+    private TableView table;
+    private LogContent content;
+
+    public MarkupIndexDialog(Window owner, LogContent content) {
+        this.content = content;
         show(owner);
     }
 
@@ -32,6 +42,7 @@ public class MarkupIndexDialog extends Dialog<String> {
             setTitle("List markup tags in log");
             setDialogPane(dialogPane);
 
+            showTags();
            // setOnShowing(dialogEvent -> Platform.runLater(() -> contentText.requestFocus()));
         }
         catch (IOException e) {
@@ -42,6 +53,22 @@ public class MarkupIndexDialog extends Dialog<String> {
             alert.showAndWait();
             throw new RuntimeException(e);
         }
+    }
+
+    private void showTags() {
+        final List<IMarkupContent> markups = new ArrayList<>();
+        for (int lineNumber = 0; lineNumber < content.lineCount(); ) {
+            var tag = content.getTagContentFor(lineNumber);
+            if (tag == null) {
+                lineNumber++;
+                continue;
+            }
+            markups.add(tag);
+            lineNumber = tag.getEndLine() + 1;
+        }
+
+        markups.forEach(tag ->
+            table.getItems().add(tag));
     }
 
     @FXML

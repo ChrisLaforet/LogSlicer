@@ -12,6 +12,10 @@ public class XMLMarkupContent implements IMarkupContent {
         this.endLine = endLine;
     }
 
+    public String getMarkupType() {
+        return "XML";
+    }
+
     public String getContent() {
         return content;
     }

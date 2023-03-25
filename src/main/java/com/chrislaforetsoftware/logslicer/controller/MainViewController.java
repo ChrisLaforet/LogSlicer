@@ -64,7 +64,7 @@ public class MainViewController {
 
     private Optional<Location> lastIndex = Optional.empty();
 
-    private Parent listMarkup;
+    private MarkupIndexDialog listMarkup;
 
     public LogContent getLogContent() {
         return this.logContent;
@@ -175,8 +175,8 @@ public class MainViewController {
             return;
         }
 
-        final MarkupIndexDialog dialog = new MarkupIndexDialog(LogSlicer.getStage());
-        dialog.show();
+        listMarkup = new MarkupIndexDialog(LogSlicer.getStage(), logContent);
+        listMarkup.show();
     }
 
     public void handleOpenLog(ActionEvent actionEvent) {
@@ -186,6 +186,8 @@ public class MainViewController {
         fileChooser.setTitle("Open log file");
         final File file = fileChooser.showOpenDialog(LogSlicer.getStage());
         if (file != null) {
+            checkAndCloseOpenDialogs();
+
             Task<LogContent> loadFileTask = loadLogContent(file);
             progressStatus.progressProperty().bind(loadFileTask.progressProperty());
             loadFileTask.run();
@@ -198,10 +200,19 @@ public class MainViewController {
 
         final PasteLogViewDialog dialog = new PasteLogViewDialog(LogSlicer.getStage());
         dialog.showAndWait().ifPresent(text -> {
+            checkAndCloseOpenDialogs();
+
             Task<LogContent> loadFileTask = loadLogContent(text);
             progressStatus.progressProperty().bind(loadFileTask.progressProperty());
             loadFileTask.run();
         });
+    }
+
+    private void checkAndCloseOpenDialogs() {
+        if (listMarkup != null) {
+            listMarkup.close();
+            listMarkup = null;
+        }
     }
 
     public void handleGoToLine(ActionEvent actionEvent) {
@@ -399,15 +410,14 @@ public class MainViewController {
                     ++currentLine;
                 }
             }
-
         }
-
 
         loaderTask.showProgress(lineCount, lineCount);
         return content;
     }
 
     public void handleClose(ActionEvent actionEvent) {
+        checkAndCloseOpenDialogs();
         Platform.exit();
     }
 }
