@@ -65,8 +65,7 @@
                 <Insets bottom="5.0" left="5.0" right="5.0" />
             </padding>
             <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                <ProgressBar fx:id="progressStatus" prefWidth="150.0" progress="0.0" />
-                <Label fx:id="statusMessage" prefWidth="150.0" text="Waiting">
+                <Label fx:id="statusMessage" prefWidth="300.0" text="Waiting">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin></Label>

@@ -17,24 +17,18 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.InlineCssTextArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.function.IntFunction;
@@ -50,9 +44,6 @@ public class MainViewController implements IMoveTo {
 
     @FXML
     private Label totalLines;
-
-    @FXML
-    private ProgressBar progressStatus;
 
     private LogContent logContent;
 
@@ -180,8 +171,6 @@ public class MainViewController implements IMoveTo {
     }
 
     public void handleOpenLog(ActionEvent actionEvent) {
-        progressStatus.setProgress(0.0);
-
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open log file");
         final File file = fileChooser.showOpenDialog(LogSlicer.getStage());
@@ -189,21 +178,16 @@ public class MainViewController implements IMoveTo {
             checkAndCloseOpenDialogs();
 
             Task<LogContent> loadFileTask = loadLogContent(file);
-            progressStatus.progressProperty().bind(loadFileTask.progressProperty());
             loadFileTask.run();
-            progressStatus.progressProperty().unbind();
         }
     }
 
     public void handlePasteLog(ActionEvent actionEvent) {
-        progressStatus.setProgress(0.0);
-
         final PasteLogViewDialog dialog = new PasteLogViewDialog(LogSlicer.getStage());
         dialog.showAndWait().ifPresent(text -> {
             checkAndCloseOpenDialogs();
 
             Task<LogContent> loadFileTask = loadLogContent(text);
-            progressStatus.progressProperty().bind(loadFileTask.progressProperty());
             loadFileTask.run();
         });
     }
@@ -279,6 +263,9 @@ public class MainViewController implements IMoveTo {
 
             protected LogContent doCall() throws Exception {
                 long lineCount = text.codePoints().filter(ch -> ch == '\n').count();
+
+                statusMessage.setText("Loading pasted log file");
+
                 try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
                     return parseLogContent(this, reader, (int)lineCount);
                 }
@@ -291,8 +278,6 @@ public class MainViewController implements IMoveTo {
                 codeArea.clear();
                 codeArea.replaceText(0, 0, logContent.getText());
                 totalLines.setText(logContent.lineCount() + " lines");
-
-                progressStatus.progressProperty().unbind();
 
                 Platform.runLater(() -> {
                     for (var paragraph = 0; paragraph < logContent.lineCount(); paragraph++) {
@@ -313,8 +298,6 @@ public class MainViewController implements IMoveTo {
             statusMessage.setText("Failed to parse pasted log file");
             totalLines.setText("");
 
-            progressStatus.progressProperty().unbind();
-
             final Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText(null);
@@ -333,6 +316,8 @@ public class MainViewController implements IMoveTo {
                     lineCount = stream.count();
                 }
 
+                statusMessage.setText("Reading " + file.getName());
+
                 try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                     return parseLogContent(this, reader, (int)lineCount);
                 }
@@ -342,11 +327,9 @@ public class MainViewController implements IMoveTo {
         loaderTask.setOnSucceeded(workerStateEvent -> {
             try {
                 logContent = loaderTask.get();
-                statusMessage.setText("Loaded " + file.getName());
+                statusMessage.setText("Read " + file.getName());
                 codeArea.clear();
                 codeArea.replaceText(0, 0, logContent.getText());
-
-                progressStatus.progressProperty().unbind();
 
                 Platform.runLater(() -> {
                     for (var paragraph = 0; paragraph < logContent.lineCount(); paragraph++) {
@@ -367,8 +350,6 @@ public class MainViewController implements IMoveTo {
             statusMessage.setText("Failed to load file");
             totalLines.setText("");
 
-            progressStatus.progressProperty().unbind();
-
             final Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText(null);
@@ -380,6 +361,8 @@ public class MainViewController implements IMoveTo {
     }
 
     private LogContent parseLogContent(LogContentTask loaderTask, BufferedReader reader, int lineCount) throws IOException {
+        statusMessage.setText("Checking for markup in log");
+
         final LogContent content = new LogContent();
         String line;
         int linesLoaded = 0;
@@ -413,6 +396,8 @@ public class MainViewController implements IMoveTo {
         }
 
         loaderTask.showProgress(lineCount, lineCount);
+        statusMessage.setText("Checking for markup complete");
+
         return content;
     }
 
