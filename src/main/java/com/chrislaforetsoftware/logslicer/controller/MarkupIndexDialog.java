@@ -12,8 +12,7 @@ import javafx.stage.Modality;
 import javafx.stage.Window;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class MarkupIndexDialog extends Dialog<String> {
 

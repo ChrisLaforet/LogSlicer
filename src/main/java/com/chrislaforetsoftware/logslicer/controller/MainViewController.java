@@ -14,6 +14,8 @@ import com.chrislaforetsoftware.logslicer.request.IMoveTo;
 import com.chrislaforetsoftware.logslicer.search.Location;
 import com.chrislaforetsoftware.logslicer.search.TextSearch;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -150,13 +152,7 @@ public class MainViewController implements IMoveTo {
                         codeArea.setStyle(location.line(), location.column(), location.column() + location.length(), "-rtfx-background-color: white;"));
 
                 moveToLocation(index.line(), index.column());
-
                 codeArea.setStyle(index.line(), index.column(), index.column() + index.length(),"-rtfx-background-color: yellow;");
-                //codeArea.setStyleClass(index.column(), index.column() + index.length(), "-rtfx-background-color: red;");
-//                codeArea.setStyle(0,
-//                                index.column(),
-//                            index.column() + index.length(),
-//                                Collections.singleton("-rtfx-background-color: yellow;"));
             });
         });
     }
@@ -167,6 +163,7 @@ public class MainViewController implements IMoveTo {
         }
 
         listMarkup = new MarkupIndexDialog(LogSlicer.getStage(), logContent, this);
+        listMarkup.setOnCloseRequest(e -> this.listMarkup = null);
         listMarkup.show();
     }
 
@@ -237,8 +234,6 @@ public class MainViewController implements IMoveTo {
 
         final var content = logContent.getXmlContentFor(lineNumber);
         if (content != null) {
-            System.err.println(content.getContent());
-
             final ContentViewDialog dialog = new ContentViewDialog(LogSlicer.getStage(), lineNumber, content);
             dialog.showAndWait();
         }
